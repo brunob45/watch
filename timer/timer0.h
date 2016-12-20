@@ -1,3 +1,11 @@
+/*
+ * Nom: 
+ * Copyright (C) 2016 Bruno Bousquet
+ * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
+ * Description: 
+ * Version: 1.0
+ */
+
 #ifndef __TIMER0_H__
 #define __TIMER0_H__
 
@@ -60,18 +68,13 @@ namespace Timer0
 	
 	uint8_t getTime()
 	{
-		return getGounter() * F_CPU / TIMER_PRESCALER / 1000;
+		return getCounter() * F_CPU / TIMER_PRESCALER / 1000;
 	}
 }
 
 ISR(TIMER0_COMPA_vect)
 {
-	if(Timer0::onTimerOut)
-	{
-		cli();
-		Timer0::onTimerOut();
-		sei();
-	}
+	if(Timer0::onTimerOut) Timer0::onTimerOut();
 }
 
 #endif

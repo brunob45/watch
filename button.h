@@ -10,26 +10,16 @@
 #define __BUTTON_H__
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
 namespace Button
 {
-	void (*onButtonPressed)(void);
-	
 	void setup();
 	uint8_t getDebState();
 	uint8_t getState();
 	
+	void enableInterrupt(void (*handler)(void));
+	void disableInterrupt();
 }
 
-ISR(INT1_vect)
-{
-	if(onButtonPressed)
-	{
-		cli();
-		onButtonPressed();
-		sei();
-	}
-}
 #endif
 

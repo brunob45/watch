@@ -7,7 +7,8 @@
  */
 
 #include "display.h"
-#include <avr/interrupt.h>
+
+#include "timer/timer0.h"
 
 uint8_t showing = 0;
 Time displayTime;

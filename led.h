@@ -29,14 +29,18 @@ class LED
 	uint8_t _bit;
 public:
 	LED() : _port(0), _bit(0){}
-	LED(volatile uint8_t *port, uint8_t bit) : _port(port), _bit(bit) {	}
+	LED(volatile uint8_t *port, uint8_t bit) : _port(port), _bit(bit) 
+	{
+		// set LED pin as output
+		*(_port-1) |= _BV(_bit);
+	}
 	void turnOn()
 	{
-		*_port |= _BV(_bit);
+		if(_port) *_port |= _BV(_bit);
 	}
 	void turnOff()
 	{
-		*_port &= ~_BV(_bit);
+		if(_port) *_port &= ~_BV(_bit);
 	}
 };
 

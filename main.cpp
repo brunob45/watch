@@ -7,11 +7,14 @@
  */
 
 #include "main.h"
-#include <avr/interrupt.h>
+
 #include <util/delay.h>
 #include <avr/sleep.h>
-#include "Button.h"
+
+#include "button.h"
 #include "timer/timer1.h"
+#include "display.h"
+#include "rtc.h"
 
 void buttonHandler(void)
 {
@@ -60,10 +63,10 @@ void setup()
 	PRR = _BV(PRTIM0) | _BV(PRSPI) | _BV(PRADC);
 	
 	// set all ports as outputs
-	DDRA = 0xFF;
-	DDRB = 0xFF;
-	DDRC = 0xFF;
-	DDRD = 0xFF & ~_BV(3); // except INT1
+	//DDRA = 0xFF;
+	//DDRB = 0xFF;
+	//DDRC = 0xFF;
+	//DDRD = 0xFF & ~_BV(3); // except INT1
 
 	// set sleep mode
 	set_sleep_mode(SM1); // full sleep mode
@@ -90,11 +93,13 @@ int main()
 	
 	RTC::setup();
 	Display::setup();
-	Button::setup();
 	
-	Timer1::setup(timer1Handler);
-	Timer1::enableInterrupt();
-	Tiemr1::start(5000);       //minuterie de 5 secondes
+	Button::setup();
+	Button::enableInterrupt(buttonHandler);
+	
+	Timer1::setup();
+	Timer1::enableInterrupt(timer1Handler);
+	Timer1::start(5000);       //minuterie de 5 secondes
 	sei();
 	
 	for(;;)	{	}

@@ -14,13 +14,10 @@
 #define F_CPU 4000000UL
 #endif
 
- 
 #include <avr/io.h> 
-#include "display.h"
-#include "rtc.h"
+#include "time.h"
 
 Time now;
-
 
 void sleepNow();
 void partirMinuterie ( uint16_t duree_ms );
