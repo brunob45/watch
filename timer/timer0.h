@@ -1,11 +1,12 @@
-#ifndef __TIMER1_H__
-#define __TIMER1_H__
+#ifndef __TIMER0_H__
+#define __TIMER0_H__
 
 #include <avr/interrupt.h>
+#include <avr/io.h>
 
 #define TIMER_PRESCALER 1024UL
 
-namespace Timer1
+namespace Timer0
 {
 	void (*onTimerOut)(void) = 0;
 	
@@ -15,21 +16,19 @@ namespace Timer1
 		// interruption apres la duree specifiee
 		
 		// disable clock to timer1 module
-		PRR &= ~_BV(PRTIM1);
+		PRR &= ~_BV(PRTIM0);
 		
 		// set interrupt handler method
 		if(handler)	onTimerOut = handler;
 		
-		TCCR1A = 0; 										//No output
-		TCCR1B = _BV(CS12) | _BV(CS10) | _BV(WGM12); 		//CS12 & CS10 for clk/1024 + CTC timer
-		TCCR1C = 0;
+		TCCR0A = _BV(CTC0) | _BV(CS02) | _BV(CS00); //CS02 & CS00 for clk/1024 + CTC timer
 	}
 	
-	void start(uint16_t top)
+	void start(const uint8_t top)
 	{
-		TCNT1 = 0;
-		OCR1A = top * F_CPU / TIMER_PRESCALER / 1000;	//Counter compare value
-		PRR &= ~_BV(PRTIM1);
+		TCNT0 = 0;
+		OCR0A = top * F_CPU / TIMER_PRESCALER / 1000;	//Counter compare value
+		PRR &= ~_BV(PRTIM0);
 	}
 	
 	void restart()
@@ -40,37 +39,37 @@ namespace Timer1
 	
 	void stop()
 	{
-		PRR |= _BV(PRTIM1);
+		PRR |= _BV(PRTIM0);
 	}
 	
 	void enableInterrupt(void (*handler)(void) = 0)
 	{
 		if(handler) onTimerOut = handler;
-		TIMSK1 = _BV(OCIE1A); 
+		TIMSK0 = _BV(OCIE0A); 
 	}
 	
 	void disableInterrupt()
 	{
-		TIMSK1 = 0;
+		TIMSK0 = 0;
 	}
 	
-	uint16_t getCounter()
+	uint8_t getCounter()
 	{
-		return TCNT1;
+		return TCNT0;
 	}
 	
-	uint16_t getTime()
+	uint8_t getTime()
 	{
 		return getGounter() * F_CPU / TIMER_PRESCALER / 1000;
 	}
 }
 
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER0_COMPA_vect)
 {
-	if(Timer1::onTimerOut)
+	if(Timer0::onTimerOut)
 	{
 		cli();
-		Timer1::onTimerOut();
+		Timer0::onTimerOut();
 		sei();
 	}
 }
