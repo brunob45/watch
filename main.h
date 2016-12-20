@@ -9,8 +9,11 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#define F_CPU 8000000UL
-#define TIMER_PRESCALER 1024UL
+#ifndef F_CPU
+#warning "F_CPU not defined in <main.h>"
+#define F_CPU 4000000UL
+#endif
+
  
 #include <avr/io.h> 
 #include "display.h"

@@ -30,5 +30,5 @@ uint8_t Button::getDebState()
 
 uint8_t Button::getState()
 {
-	return PIND & _BV(BUTTON);
+	return PIND & _BV(3);
 }

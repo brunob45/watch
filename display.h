@@ -24,7 +24,8 @@ namespace Display
 	
 	static LED H[12];
 	static LED M[12];
-	static uint8_t showing = 0;
+	
+	void onTimerOut();
 };
 
 #endif
