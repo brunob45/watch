@@ -9,6 +9,7 @@
 #include "display.h"
 #include <avr/interrupt.h>
 
+uint8_t showing = 0;
 Time displayTime;
 
 void Display::setup()
@@ -74,4 +75,13 @@ void Display::stopFlash()
 {
 	// disable TIM0 interrupts
 	PRR |= _BV(PRTIM0);
+}
+
+void Display::onTimerOut()
+{
+	if(showing)
+		clear();
+	else
+		showTime(displayTime);
+	showing = !showing;
 }

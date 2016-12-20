@@ -67,7 +67,14 @@
 # Name of target controller
 # (e.g. 'at90s8515', see the available avr-gcc mmcu
 # options for possible values)
-MCU=ATMega324PA
+MCU=attiny88
+
+# Processor frequency.
+#     This will define a symbol, F_CPU, in all source code files equal to the 
+#     processor frequency. You can then use this symbol in your source code to 
+#     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
+#     automatically to create a 32-bit value in your source code.
+F_CPU = 4000000
 
 # Name of our project
 # (use a single word, e.g. 'myproject')
@@ -78,7 +85,7 @@ PROJECTNAME=Montre
 # (list all files to compile, e.g. 'a.c b.cpp as.S'):
 # Use .cc, .cpp or .C suffix for C++ files, use .S
 # (NOT .s !!!) for assembly source code files.
-PRJSRC=main.cpp rtc.cpp display.cpp
+PRJSRC=main.cpp rtc.cpp display.cpp button.cpp 
 
 # additional includes (e.g. -I/path/to/mydir)
 INC=
@@ -135,7 +142,9 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-funsigned-bitfields -funsigned-char    \
 	-Wall                                        \
 	-Wa,-ahlms=$(firstword                  \
-	$(filter %.lst, $(<:.c=.lst)))
+	$(filter %.lst, $(<:.c=.lst)))\
+	-DF_CPU=$(F_CPU)
+
 
 # c++ specific flags
 CPPFLAGS=-fno-exceptions -std=c++98    \

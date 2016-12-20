@@ -10,6 +10,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/sleep.h>
+#include "Button.h"
+#include "timer/timer1.h"
 
 ISR(INT1_vect)
 {
@@ -31,21 +33,15 @@ ISR(INT1_vect)
 	//sei();		// enable interrupt
 }
 
-ISR(TIMER1_COMPA_vect) //interruption timer
+void timer1Handler( void )
 {
 	Display::clear();
-	TIMSK1 = 0; //disable TIM1 interrupts
 	sleepNow();
 }
 
 ISR(TIMER0_COMPA_vect)
 {
-	using namespace Display;
-	if(showing)
-		clear();
-	else
-		showTime(now);
-	showing != showing;
+	Display::onTimerOut();
 }
 
 void sleepNow()
@@ -76,6 +72,12 @@ void partirMinuterie ( uint16_t duree_ms )
 	TIMSK1 = _BV(OCIE1A);								//timer mask
 }
 
+void setClock()
+{
+	CLKPR = _BV(CLKPCE); // enable clock prescaler change
+	CLKPR = _BV(CLKPS0); // set clock prescaler to f/2;
+}
+
 void setup()
 {
 	cli(); // disable interrupt
@@ -92,6 +94,7 @@ void setup()
 	RTC::setup();
 	Display::setup();
 	Button::setup();
+	Timer1::setup(timer1Handler);
 	
 	// set sleep mode
 	set_sleep_mode(SM1); // full sleep mode
@@ -106,7 +109,7 @@ void setTime()
 {
 	while(TCNT1 < OCR1A/2)
 	{
-		if(isButtonPressed())
+		if(Button::getState())
 		{
 			now.increment();
 			Display::showTime(now);
