@@ -9,6 +9,7 @@
 #include "display.h"
 #include <avr/interrupt.h>
 
+uint8_t showing = 0;
 Time displayTime;
 
 void Display::setup()
@@ -39,10 +40,7 @@ void Display::setup()
 	M[50] = LED(&PORTD, 4); // D4
 	M[55] = LED(&PORTD, 1); // D1
 	
-	// setup TIM0
-	TCCR0A = _BV(CTC0) | _BV(CS02) | _BV(CS00); //CS12 & CS10 for clk/1024, CTC0 for clear on compare match
-	
-	PRR |= _BV(PRTIM0); // disable timer 0
+	Timer0::setup(onTimerOut);
 }
 
 void Display::showTime(Time t)
@@ -64,14 +62,22 @@ void Display::clear()
 
 void Display::startFlash(uint8_t delay)
 {
-	PRR &= ~_BV(PRTIM0);
-	TCNT0 = 0;						//Reset counter value
-	OCR0A = 0xFE;					//Counter compare value
-	TIMSK0 = _BV(OCIE0A);			//enable TIM0 interrupt
+	Timer0::enableInterrupt();
+	Timer0::start(65);
+	
 }
 
 void Display::stopFlash()
 {
 	// disable TIM0 interrupts
 	PRR |= _BV(PRTIM0);
+}
+
+void Display::onTimerOut()
+{
+	if(showing)
+		clear();
+	else
+		showTime(displayTime);
+	showing = !showing;
 }

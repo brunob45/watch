@@ -9,14 +9,19 @@
 #include "rtc.h"
 #include <avr/io.h>
 
+
 const uint8_t address = 0xA2;
 	
 void RTC::setup()
 {
    // Initialisation de l'horloge de l'interface I2C
    TWSR = 0;
+   
    // prediviseur
-   TWBR =  (F_CPU / 100000UL - 16) / 2; //frequence de 100 kHz
+   TWBR =  (F_CPU * 2 / F_TWI - 16) / 2 > 10 ? (F_CPU * 2 / F_TWI - 16) / 2 : 10; 
+   
+   // clock source = F_CPU * 2
+   TWHSR = _BV(TWIHS);
 }
 
 void RTC::start()
@@ -91,3 +96,4 @@ uint8_t RTC::setTime(Time t)
 	
 	return 0;
 }
+
