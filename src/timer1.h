@@ -15,9 +15,9 @@
 
 namespace Timer1
 {
-	void (*onTimerOut)(void) = 0;
+EventHandler onTimerOut = 0;
 	
-	void setup(void (*handler)(void) = 0)
+	void setup(EventHandler handler = 0)
 	{
 		// mode CTC du timer 1 avec horloge divisee par 1024
 		// interruption apres la duree specifiee
@@ -51,7 +51,7 @@ namespace Timer1
 		PRR |= _BV(PRTIM1);
 	}
 	
-	void enableInterrupt(void (*handler)(void) = 0)
+	void enableInterrupt(EventHandler handler = 0)
 	{
 		if(handler) onTimerOut = handler;
 		TIMSK1 = _BV(OCIE1A); 

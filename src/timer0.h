@@ -11,14 +11,15 @@
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include "util.h"
 
 #define TIMER_PRESCALER 1024UL
 
 namespace Timer0
 {
-	void (*onTimerOut)(void) = 0;
+	EventHandler onTimerOut = 0;
 	
-	void setup(void (*handler)(void) = 0)
+	void setup(EventHandler handler = 0)
 	{
 		// mode CTC du timer 1 avec horloge divisee par 1024
 		// interruption apres la duree specifiee
@@ -50,7 +51,7 @@ namespace Timer0
 		PRR |= _BV(PRTIM0);
 	}
 	
-	void enableInterrupt(void (*handler)(void) = 0)
+	void enableInterrupt(EventHandler handler = 0)
 	{
 		if(handler) onTimerOut = handler;
 		TIMSK0 = _BV(OCIE0A); 
