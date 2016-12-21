@@ -85,7 +85,7 @@ PROJECTNAME=Montre
 # (list all files to compile, e.g. 'a.c b.cpp as.S'):
 # Use .cc, .cpp or .C suffix for C++ files, use .S
 # (NOT .s !!!) for assembly source code files.
-PRJSRC=main.cpp rtc.cpp display.cpp button.cpp 
+PRJSRC=$(wildcard *.c *.cpp *.cc *.C *.S)
 
 # additional includes (e.g. -I/path/to/mydir)
 INC=
@@ -147,11 +147,11 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 
 
 # c++ specific flags
-CPPFLAGS=-fno-exceptions -std=c++98    \
+CPPFLAGS=-fno-exceptions -std=c++11   \
 	-Wa,-ahlms=$(firstword         \
-	$(filter %.lst, $(<:.cpp=.lst))\
-	$(filter %.lst, $(<:.cc=.lst)) \
-	$(filter %.lst, $(<:.C=.lst)))
+	$(filter %.lst, $(<:%.cpp=%.lst))\
+	$(filter %.lst, $(<:%.cc=%.lst)) \
+	$(filter %.lst, $(<:%.C=%.lst)))
 
 # assembler
 ASMFLAGS =-I. $(INC) -mmcu=$(MCU)        \
@@ -184,7 +184,7 @@ GDBINITFILE=gdbinit-$(PROJECTNAME)
 
 # Start by splitting source files by type
 #  C++
-CPPFILES=$(filter %.cpp, $(PRJSRC))
+CPPFILES=$(filter %.cpp,  $(PRJSRC))
 CCFILES=$(filter %.cc, $(PRJSRC))
 BIGCFILES=$(filter %.C, $(PRJSRC))
 #  C
@@ -194,18 +194,18 @@ ASMFILES=$(filter %.S, $(PRJSRC))
 
 
 # List all object files we need to create
-OBJDEPS=$(CFILES:.c=.o)    \
-	$(CPPFILES:.cpp=.o)\
-	$(BIGCFILES:.C=.o) \
-	$(CCFILES:.cc=.o)  \
-	$(ASMFILES:.S=.o)
+OBJDEPS=$(CFILES:%.c=%.o)    \
+	$(CPPFILES:%.cpp=%.o)\
+	$(BIGCFILES:%.C=%.o) \
+	$(CCFILES:%.cc=%.o)  \
+	$(ASMFILES:%.S=%.o)
 
 # Define all lst files.
-LST=$(filter %.lst, $(OBJDEPS:.o=.lst))
+LST=$(OBJDEPS:%.cpp=%.lst))
 
 # All the possible generated assembly
 # files (.s files)
-GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s))
+GENASMFILES=$(filter %.s, $(OBJDEPS:%.o=%.s))
 
 
 .SUFFIXES : .c .cc .cpp .C .o .out .s .S \
@@ -277,12 +277,12 @@ $(TRG): $(OBJDEPS)
 #### Generating hex files ####
 # hex files from elf
 #####  Generating a gdb initialisation file    #####
-.out.hex:
+%.out.hex:
 	$(OBJCOPY) -j .text                    \
 		-j .data                       \
 		-O $(HEXFORMAT) $< $@
 
-.out.ee.hex:
+%.out.ee.hex:
 	$(OBJCOPY) -j .eeprom                  \
 		--change-section-lma .eeprom=0 \
 		-O $(HEXFORMAT) $< $@

@@ -8,7 +8,7 @@
 
 #include "display.h"
 
-#include "timer/timer0.h"
+#include "timer0.h"
 
 uint8_t showing = 0;
 Time displayTime;

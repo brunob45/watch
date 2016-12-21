@@ -12,7 +12,7 @@
 #include <avr/sleep.h>
 
 #include "button.h"
-#include "timer/timer1.h"
+#include "timer1.h"
 #include "display.h"
 #include "rtc.h"
 
