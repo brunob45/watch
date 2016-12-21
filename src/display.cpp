@@ -40,8 +40,6 @@ void Display::setup()
 	M[45] = LED(&PORTA, 3); // A3
 	M[50] = LED(&PORTD, 4); // D4
 	M[55] = LED(&PORTD, 1); // D1
-	
-	Timer0::setup(onTimerOut);
 }
 
 void Display::showTime(Time t)
@@ -63,8 +61,8 @@ void Display::clear()
 
 void Display::startFlash(uint8_t delay)
 {
-	Timer0::enableInterrupt();
-	Timer0::start(65);
+	timer0.enableInterrupt(onTimerOut);
+	timer0.start(65);
 	
 }
 

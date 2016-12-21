@@ -201,7 +201,7 @@ OBJDEPS=$(CFILES:%.c=%.o)    \
 	$(ASMFILES:%.S=%.o)
 
 # Define all lst files.
-LST=$(OBJDEPS:%.cpp=%.lst))
+LST=$(OBJDEPS:%.cpp=%.lst)
 
 # All the possible generated assembly
 # files (.s files)

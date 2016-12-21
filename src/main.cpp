@@ -10,6 +10,7 @@
 
 #include <util/delay.h>
 #include <avr/sleep.h>
+#include <avr/interrupt.h>
 
 #include "button.h"
 #include "timer1.h"
@@ -18,17 +19,17 @@
 
 void buttonHandler(void)
 {
-	Timer1::stop();
+	timer1.stop();
 	
 	if( Button::getDebState() &&       // button is pressed
-		Timer1::getTime() < 500)       // pressed fast enough (t < 500ms)
+		timer1.getTime() < 500)       // pressed fast enough (t < 500ms)
 	{
 		// enter time set mode
 		setTime();
 		RTC::setTime(now);
 	}
 	
-	Timer1::restart();
+	timer1.restart();
 }
 
 void timer1Handler( void )
@@ -97,9 +98,8 @@ int main()
 	Button::setup();
 	Button::enableInterrupt(buttonHandler);
 	
-	Timer1::setup();
-	Timer1::enableInterrupt(timer1Handler);
-	Timer1::start(5000);       //minuterie de 5 secondes
+	timer1.enableInterrupt(timer1Handler);
+	timer1.start(5000);       //minuterie de 5 secondes
 	sei();
 	
 	for(;;)	{	}
