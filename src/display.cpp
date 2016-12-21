@@ -7,13 +7,13 @@
  */
 
 #include "display.h"
-
 #include "timer0.h"
+
 
 uint8_t showing = 0;
 Time displayTime;
 
-void Display::setup()
+Display::Display()
 {
 	H[0]  = LED(&PORTC, 3); // C3
 	H[1]  = LED(&PORTC, 1); // C1
@@ -42,6 +42,15 @@ void Display::setup()
 	M[55] = LED(&PORTD, 1); // D1
 }
 
+void Display::showTime()
+{
+	if(showing)	clear();	// clear old time
+
+	H[displayTime.h%12].turnOn();
+	H[displayTime.m/5].turnOn();
+	showing = 1;
+}
+
 void Display::showTime(Time t)
 {
 	if(showing)	clear();	// clear old time
@@ -63,7 +72,6 @@ void Display::startFlash(uint8_t delay)
 {
 	timer0.enableInterrupt(onTimerOut);
 	timer0.start(65);
-	
 }
 
 void Display::stopFlash()
@@ -75,8 +83,8 @@ void Display::stopFlash()
 void Display::onTimerOut()
 {
 	if(showing)
-		clear();
+		display.clear();
 	else
-		showTime(displayTime);
+		display.showTime(displayTime);
 	showing = !showing;
 }

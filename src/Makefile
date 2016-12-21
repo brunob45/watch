@@ -75,6 +75,7 @@ MCU=attiny88
 #     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
 #     automatically to create a 32-bit value in your source code.
 F_CPU = 4000000
+F_TWI = 100000
 
 # Name of our project
 # (use a single word, e.g. 'myproject')
@@ -143,7 +144,8 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-Wall                                        \
 	-Wa,-ahlms=$(firstword                  \
 	$(filter %.lst, $(<:.c=.lst)))\
-	-DF_CPU=$(F_CPU)
+	-DF_CPU=$(F_CPU) \
+	-DF_TWI=$(F_TWI)
 
 
 # c++ specific flags

@@ -26,7 +26,7 @@ void buttonHandler(void)
 	{
 		// enter time set mode
 		setTime();
-		RTC::setTime(now);
+		rtc.setTime(now);
 	}
 	
 	timer1.restart();
@@ -34,7 +34,7 @@ void buttonHandler(void)
 
 void timer1Handler( void )
 {
-	Display::clear();
+	display.clear();
 	sleepNow();
 }
 
@@ -61,13 +61,7 @@ void setClock()
 void setup()
 {
 	// disable all peripherals.
-	PRR = _BV(PRTIM0) | _BV(PRSPI) | _BV(PRADC);
-	
-	// set all ports as outputs
-	//DDRA = 0xFF;
-	//DDRB = 0xFF;
-	//DDRC = 0xFF;
-	//DDRD = 0xFF & ~_BV(3); // except INT1
+	PRR = 0xFF;
 
 	// set sleep mode
 	set_sleep_mode(SM1); // full sleep mode
@@ -80,7 +74,7 @@ void setTime()
 		if(Button::getState())
 		{
 			now.increment();
-			Display::showTime(now);
+			display.showTime(now);
 			TCNT1 = 0;
 			_delay_ms(750);
 		}
@@ -91,9 +85,6 @@ int main()
 {
 	cli(); // disable interrupt
 	setup();
-	
-	RTC::setup();
-	Display::setup();
 	
 	Button::setup();
 	Button::enableInterrupt(buttonHandler);

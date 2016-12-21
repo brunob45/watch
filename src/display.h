@@ -13,19 +13,25 @@
 #include "time.h"
 #include <avr/io.h>
 
-namespace Display
+class Display
 {
-	void setup();
+private:
+	LED H[12];
+	LED M[12];
+
+public:
+	Display();
+	~Display() {  }
+
 	void clear();
 	void showTime();
-	void showTime(Time);
+	void showTime(Time t);
 	void startFlash(uint8_t delay);
 	void stopFlash();
 	
-	static LED H[12];
-	static LED M[12];
-	
-	void onTimerOut();
+	static void onTimerOut();
 };
+
+static Display display;
 
 #endif
