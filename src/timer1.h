@@ -14,7 +14,6 @@
 class Timer1
 {
 public:
-	EventHandler onTimerOut = 0;
 
 	Timer1(EventHandler handler = 0);
 	~Timer1() {  }
@@ -28,6 +27,8 @@ public:
 	
 	uint16_t getCounter();
 	uint16_t getTime();
+	void resetCounter(uint16_t cnt = 0);
+	uint16_t getTop();
 };
 
 static Timer1 timer1;

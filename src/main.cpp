@@ -21,7 +21,7 @@ void buttonHandler(void)
 {
 	timer1.stop();
 	
-	if( Button::getDebState() &&       // button is pressed
+	if( button.getDebState() &&       // button is pressed
 		timer1.getTime() < 500)       // pressed fast enough (t < 500ms)
 	{
 		// enter time set mode
@@ -58,6 +58,22 @@ void setClock()
 	CLKPR = _BV(CLKPS0); // set clock prescaler to f/2;
 }
 
+
+
+void setTime()
+{
+	while(timer1.getCounter() < timer1.getTop()/2)
+	{
+		if(button.getState())
+		{
+			now.increment();
+			display.showTime(now);
+			timer1.resetCounter();
+			_delay_ms(750);
+		}
+	}
+}
+
 void setup()
 {
 	// disable all peripherals.
@@ -67,27 +83,12 @@ void setup()
 	set_sleep_mode(SM1); // full sleep mode
 }
 
-void setTime()
-{
-	while(TCNT1 < OCR1A/2)
-	{
-		if(Button::getState())
-		{
-			now.increment();
-			display.showTime(now);
-			TCNT1 = 0;
-			_delay_ms(750);
-		}
-	}
-}
-
 int main()
 {
 	cli(); // disable interrupt
 	setup();
 	
-	Button::setup();
-	Button::enableInterrupt(buttonHandler);
+	button.enableInterrupt(buttonHandler);
 	
 	timer1.enableInterrupt(timer1Handler);
 	timer1.start(5000);       //minuterie de 5 secondes

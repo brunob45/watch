@@ -14,8 +14,6 @@
 class Timer0
 {
 public:
-	EventHandler onTimerOut = 0;
-
 	Timer0(EventHandler handler = 0);
 	~Timer0() {  }
 	

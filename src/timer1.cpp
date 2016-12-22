@@ -11,6 +11,8 @@
 
 #define TIMER_PRESCALER 1024UL
 
+EventHandler onTimer1Out = 0;
+
 Timer1::Timer1(EventHandler handler)
 {
 	// mode CTC du timer 1 avec horloge divisee par 1024
@@ -20,7 +22,7 @@ Timer1::Timer1(EventHandler handler)
 	PRR &= ~_BV(PRTIM1);
 
 	// set interrupt handler method
-	if(handler)	onTimerOut = handler;
+	if(handler)	onTimer1Out = handler;
 
 	TCCR1A = 0; 										//No output
 	TCCR1B = _BV(CS12) | _BV(CS10) | _BV(WGM12); 		//CS12 & CS10 for clk/1024 + CTC timer
@@ -47,7 +49,7 @@ void Timer1::stop()
 
 void Timer1::enableInterrupt(EventHandler handler)
 {
-	if(handler) onTimerOut = handler;
+	if(handler) onTimer1Out = handler;
 	TIMSK1 = _BV(OCIE1A);
 }
 
@@ -66,7 +68,17 @@ uint16_t Timer1::getTime()
 	return getCounter() * F_CPU / TIMER_PRESCALER / 1000;
 }
 
+void Timer1::resetCounter(uint16_t cnt)
+{
+	TCNT1 = cnt;
+}
+
+uint16_t Timer1::getTop()
+{
+	return OCR1A;
+}
+
 ISR(TIMER1_COMPA_vect)
 {
-	if(timer1.onTimerOut) timer1.onTimerOut();
+	if(onTimer1Out) onTimer1Out();
 }

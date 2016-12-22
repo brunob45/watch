@@ -10,16 +10,17 @@
 
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "util.h"
 
 uint8_t _state = 0;
-void (*onButtonPressed)(void) = 0;
+EventHandler onButtonPressed = 0;
 
-void Button::setup()
+Button::Button()
 {
 	// mettre le bouton en entrÃ©e
 	DDRD &= ~_BV(3);
-	// activer le Pull-Up resistor
-	PORTD |= _BV(3); 
+	// désactiver le Pull-Up resistor
+	PORTD &= ~_BV(3);
 	
 	// il faut sensibiliser les interruptions externes aux
 	// changements de niveau (falling edge) du bouton-poussoir
@@ -39,7 +40,7 @@ uint8_t Button::getState()
 	return _state = PIND & _BV(3);
 }
 
-void Button::enableInterrupt(void (*handler)(void) = 0)
+void Button::enableInterrupt(EventHandler handler = 0)
 {
 	if(handler) onButtonPressed = handler;
 	EIMSK |= _BV(INT1);

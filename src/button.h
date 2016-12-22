@@ -11,15 +11,20 @@
 
 #include <avr/io.h>
 
-namespace Button
+class Button
 {
-	void setup();
+public:
+	Button();
+	~Button() {  }
+
 	uint8_t getDebState();
 	uint8_t getState();
 	
 	void enableInterrupt(void (*handler)(void));
 	void disableInterrupt();
-}
+};
+
+static Button button;
 
 #endif
 
