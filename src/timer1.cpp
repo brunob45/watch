@@ -11,7 +11,7 @@
 
 #define TIMER_PRESCALER 1024UL
 
-EventHandler onTimer1Out = 0;
+static EventHandler onTimer1Out = 0;
 
 Timer1::Timer1(EventHandler handler)
 {

@@ -69,11 +69,6 @@
 # options for possible values)
 MCU=attiny88
 
-# Processor frequency.
-#     This will define a symbol, F_CPU, in all source code files equal to the 
-#     processor frequency. You can then use this symbol in your source code to 
-#     calculate timings. Do NOT tack on a 'UL' at the end, this will be done
-#     automatically to create a 32-bit value in your source code.
 F_CPU = 4000000
 F_TWI = 100000
 
@@ -143,17 +138,16 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-funsigned-bitfields -funsigned-char    \
 	-Wall                                        \
 	-Wa,-ahlms=$(firstword                  \
-	$(filter %.lst, $(<:.c=.lst)))\
+	$(filter %.lst, $(<:.c=.lst))) \
 	-DF_CPU=$(F_CPU) \
 	-DF_TWI=$(F_TWI)
-
 
 # c++ specific flags
 CPPFLAGS=-fno-exceptions -std=c++11   \
 	-Wa,-ahlms=$(firstword         \
-	$(filter %.lst, $(<:%.cpp=%.lst))\
-	$(filter %.lst, $(<:%.cc=%.lst)) \
-	$(filter %.lst, $(<:%.C=%.lst)))
+	$(filter %.lst, $(<:.cpp=.lst))\
+	$(filter %.lst, $(<:.cc=.lst)) \
+	$(filter %.lst, $(<:.C=.lst)))
 
 # assembler
 ASMFLAGS =-I. $(INC) -mmcu=$(MCU)        \
@@ -186,7 +180,7 @@ GDBINITFILE=gdbinit-$(PROJECTNAME)
 
 # Start by splitting source files by type
 #  C++
-CPPFILES=$(filter %.cpp,  $(PRJSRC))
+CPPFILES=$(filter %.cpp, $(PRJSRC))
 CCFILES=$(filter %.cc, $(PRJSRC))
 BIGCFILES=$(filter %.C, $(PRJSRC))
 #  C
@@ -196,18 +190,18 @@ ASMFILES=$(filter %.S, $(PRJSRC))
 
 
 # List all object files we need to create
-OBJDEPS=$(CFILES:%.c=%.o)    \
-	$(CPPFILES:%.cpp=%.o)\
-	$(BIGCFILES:%.C=%.o) \
-	$(CCFILES:%.cc=%.o)  \
-	$(ASMFILES:%.S=%.o)
+OBJDEPS=$(CFILES:.c=.o)    \
+	$(CPPFILES:.cpp=.o)\
+	$(BIGCFILES:.C=.o) \
+	$(CCFILES:.cc=.o)  \
+	$(ASMFILES:.S=.o)
 
 # Define all lst files.
-LST=$(OBJDEPS:%.cpp=%.lst)
+LST=$(filter %.lst, $(OBJDEPS:.o=.lst))
 
 # All the possible generated assembly
 # files (.s files)
-GENASMFILES=$(filter %.s, $(OBJDEPS:%.o=%.s))
+GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s))
 
 
 .SUFFIXES : .c .cc .cpp .C .o .out .s .S \
@@ -279,12 +273,12 @@ $(TRG): $(OBJDEPS)
 #### Generating hex files ####
 # hex files from elf
 #####  Generating a gdb initialisation file    #####
-%.out.hex:
+.out.hex:
 	$(OBJCOPY) -j .text                    \
 		-j .data                       \
 		-O $(HEXFORMAT) $< $@
 
-%.out.ee.hex:
+.out.ee.hex:
 	$(OBJCOPY) -j .eeprom                  \
 		--change-section-lma .eeprom=0 \
 		-O $(HEXFORMAT) $< $@

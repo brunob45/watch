@@ -12,8 +12,8 @@
 #include <avr/interrupt.h>
 #include "util.h"
 
-uint8_t _state = 0;
-EventHandler onButtonPressed = 0;
+static uint8_t _state = 0;
+static EventHandler onButtonPressed = 0;
 
 Button::Button()
 {
