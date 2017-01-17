@@ -1,9 +1,10 @@
 /*
- * Nom:
+ * Nom: timer0.cpp
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #include <avr/interrupt.h>

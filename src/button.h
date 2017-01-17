@@ -1,9 +1,10 @@
 /*
- * Nom: 
+ * Nom: button.h
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * Description: 
+ * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #ifndef __BUTTON_H__
@@ -24,7 +25,10 @@ public:
 	void disableInterrupt();
 };
 
-static Button button;
+extern Button button;
 
+#else 
+#warning "button already in use."
 #endif
+
 

@@ -1,9 +1,10 @@
 /*
- * Nom: 
+ * Nom: display.h
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * Description: 
+ * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #ifndef __DISPLAY_H__
@@ -32,6 +33,8 @@ public:
 	static void onTimerOut();
 };
 
-static Display display;
+extern Display display;
 
+#else
+#warning "display already in use."
 #endif

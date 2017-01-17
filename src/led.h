@@ -1,9 +1,10 @@
 /*
- * Nom: 
+ * Nom: led.h
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * Description: 
+ * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #ifndef __LED_H__

@@ -1,9 +1,10 @@
 /*
- * Nom: 
+ * Nom: timer0.h
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * Description: 
+ * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #ifndef __TIMER0_H__
@@ -28,6 +29,8 @@ public:
 	uint8_t getTime();
 };
 
-static Timer0 timer0;
+extern Timer0 timer0;
 
+#else
+#warning "timer0 already in use."
 #endif

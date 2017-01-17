@@ -1,9 +1,10 @@
 /*
- * Nom: 
+ * Nom: rtc.h
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * Description: 
+ * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #ifndef __RTC_H__
@@ -27,6 +28,8 @@ public:
 	uint8_t setTime(Time);
 };
 
-static RTC rtc;
+extern RTC rtc;
 
+#else
+#warning "RTC already in use."
 #endif

@@ -1,9 +1,10 @@
 /*
- * Nom: 
+ * Nom: timer1.h
  * Copyright (C) 2016 Bruno Bousquet
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * Description: 
+ * Description:
  * Version: 1.0
+ * Date : 17 jan 2017
  */
 
 #ifndef __TIMER1_H__
@@ -31,6 +32,8 @@ public:
 	uint16_t getTop();
 };
 
-static Timer1 timer1;
+extern Timer1 timer1;
 
+#else
+#warning "timer1 already in use."
 #endif
