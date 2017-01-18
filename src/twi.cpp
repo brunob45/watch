@@ -60,8 +60,8 @@ void TWI::enable()
 {
 	PRR &= ~_BV(PRTWI); //enable clock to module
 	TWSR = 0;  // Initialisation de l'horloge de l'interface I2C
-	TWBR = MAX((F_CPU * 2 / F_TWI - 16) / 2, 10); // prediviseur
-	TWHSR = _BV(TWIHS); // clock source = F_CPU * 2
+	TWBR = MAX((F_CPU  / F_TWI - 16) / 2, 10); // prediviseur
+	TWHSR = 0; // _BV(TWIHS); // clock source = F_CPU * 2   /!\ Dont need to /!\
 }
 
 void TWI::disable()

@@ -69,8 +69,10 @@
 # options for possible values)
 MCU=attiny88
 
-F_CPU = 4000000
-F_TWI = 100000
+F_CPU = 1000000
+F_TWI = 27777
+
+ISP=usbasp
 
 # Name of our project
 # (use a single word, e.g. 'myproject')
@@ -309,7 +311,11 @@ clean:
 	$(REMOVE) $(LST) $(GDBINITFILE)
 	$(REMOVE) $(GENASMFILES)
 	$(REMOVE) $(HEXTRG)
-
+	
+fuses:
+	avrdude -c ${ISP} -p attiny88 -P ${PORT} \
+      -U efuse:w:0xFF:m -U hfuse:w:0xD9:m -U lfuse:w:0xD7:m
+#        e: 1111 1111           h: 1101 1111          l: 0110 1110
 
 
 #####                    EOF                   #####
