@@ -84,14 +84,23 @@ void setup()
 {
 	// disable all peripherals.
 	PRR = 0xFF;
-
+	
+	DDRA = 0xFF;
+	DDRB = 0xFF;
+	DDRC = 0xFF;
+	DDRD = 0xFF;
+	
 	// set sleep mode
 	set_sleep_mode(SM1); // full sleep mode
 }
 
 int main()
 {
-	cli(); // disable interrupt
+	setup();
+	for(;;);
+	
+	
+	/*cli(); // disable interrupt
 	setup();
 	
 	button.enableInterrupt(buttonHandler);
@@ -100,7 +109,7 @@ int main()
 	timer1.start(5000);       //minuterie de 5 secondes
 	sei();
 	
-	for(;;)	{	}
+	for(;;)	{	}*/
 	return 0; 
 }
 
