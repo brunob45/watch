@@ -26,5 +26,11 @@ public :
 		this->m = m_temp %60;
 		this->h = (this->h + (m_temp/60)) %24;
 	}
+	void checkTime()
+	{
+		h %= 24;
+		m %= 60;
+		s %= 60;
+	}
 };
 #endif

@@ -48,6 +48,9 @@ void sleepNow()
 {
 	//http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
 	cli();
+	
+	display.clear();
+	
 	//if(sleep)
 	{
 		sleep_enable();
@@ -60,8 +63,8 @@ void sleepNow()
 
 void setClock()
 {
-	CLKPR = _BV(CLKPCE); // enable clock prescaler change
-	CLKPR = _BV(CLKPS0); // set clock prescaler to f/2;
+	//CLKPR = _BV(CLKPCE); // enable clock prescaler change
+	//CLKPR = _BV(CLKPS0); // set clock prescaler to f/2;
 }
 
 
@@ -94,10 +97,44 @@ void setup()
 	set_sleep_mode(SM1); // full sleep mode
 }
 
+#include <util/delay.h>
+
 int main()
 {
+	cli();
 	setup();
-	for(;;);
+	
+	LED l(&PORTC, 3);
+	Time t;
+	display.showTime(t);
+	display.startFlash(250);
+	sei();
+	
+	sleepNow();
+	
+	for(;;)
+	{
+	
+		display.showTime(t);
+		_delay_ms(500);
+		display.clear();
+		_delay_ms(500);
+		
+		// faire  flasher la DEL à 12h
+		/*PORTC = 1 << 3;
+		_delay_ms(500);
+		PORTC = 0;
+		_delay_ms(500);
+		/**/
+		
+		/*
+		// test de la classe LED
+		l.turnOn();
+		_delay_ms(500);
+		l.turnOff();
+		_delay_ms(500);
+		/**/
+	}
 	
 	
 	/*cli(); // disable interrupt

@@ -13,6 +13,7 @@
 
 uint8_t showing = 0;
 Time displayTime;
+
 Timer0 timer0;
 
 Display::Display()
@@ -73,7 +74,7 @@ void Display::clear()
 void Display::startFlash(uint8_t delay)
 {
 	timer0.enableInterrupt(onTimerOut);
-	timer0.start(65);
+	timer0.start_ms(delay);
 }
 
 void Display::stopFlash()
@@ -84,9 +85,8 @@ void Display::stopFlash()
 
 void Display::onTimerOut()
 {
-	if(showing)
+	if(showing = !showing)
 		display.clear();
 	else
 		display.showTime(displayTime);
-	showing = !showing;
 }
