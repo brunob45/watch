@@ -19,6 +19,7 @@ public:
 	~Timer0() {  }
 	
 	void start(const uint8_t top);
+	void start_ms(const uint8_t top_ms);
 	void restart();
 	void stop();
 	

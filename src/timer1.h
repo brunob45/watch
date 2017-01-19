@@ -20,6 +20,7 @@ public:
 	~Timer1() {  }
 	
 	void start(const uint16_t top);
+	void start_ms(const uint16_t top_ms);
 	void restart();
 	void stop();
 	

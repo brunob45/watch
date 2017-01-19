@@ -33,8 +33,13 @@ Timer1::Timer1(EventHandler handler)
 void Timer1::start(const uint16_t top)
 {
 	TCNT1 = 0;
-	OCR1A = top * F_CPU / TIMER_PRESCALER / 1000;	//Counter compare value
+	OCR1A = top;	//Counter compare value
 	PRR &= ~_BV(PRTIM1);
+}
+
+void Timer1::start_ms(const uint16_t top_ms)
+{
+	start(top_ms * F_CPU / TIMER_PRESCALER / 1000);
 }
 
 void Timer1::restart()
