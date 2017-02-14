@@ -4,149 +4,147 @@
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
- * Date : 17 jan 2017
+ * Date : 13 fev 2017
  */
 
 #include "main.h"
-
-#include <util/delay.h>
-#include <avr/sleep.h>
-#include <avr/interrupt.h>
-
-#include "button.h"
-#include "timer1.h"
 #include "display.h"
-#include "rtc.h"
+#include "timer1.h"
+#include "time.hpp"
+#include "button.h"
+#include <util/delay.h>
 
-Button button;
+
+volatile uint8_t ledState = 0;
+volatile uint8_t wakeUpDone = 0;
+static Time t;
+
 Timer1 timer1;
 Display display;
-RTC rtc;
+Button button;
 
-void buttonHandler(void)
+/*
+void setLowClockSpeed()
 {
-	timer1.stop();
-	
-	if( button.getDebState() &&       // button is pressed
-		timer1.getTime() < 500)       // pressed fast enough (t < 500ms)
-	{
-		// enter time set mode
-		setTime();
-		rtc.setTime(now);
-	}
-	
-	timer1.restart();
+	CLKPR = _BV(CLKPCE);
+	CLKPR = _BV(CLKPS2) | _BV(CLKPS0); // set clock prescaler to 32 (8MHz /32 = 250kHz)
+}*/
+
+
+void onTimerOut(void)
+{
+	display.stopFlash();
+    timer1.stop();
+    display.clear();
+    wakeUpDone = 0;
 }
 
-void timer1Handler( void )
+void wakeUpSequence()
 {
-	display.clear();
-	sleepNow();
+    display.showTime(t);
+    wakeUpDone = 1;
 }
 
-void sleepNow()
+void onButtonPressed(void)
 {
-	//http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
-	cli();
-	
-	display.clear();
-	
-	//if(sleep)
-	{
-		sleep_enable();
-		sei();
-		sleep_cpu();
-		sleep_disable();
-	}
-	sei();
+    if(!wakeUpDone)
+    {
+        wakeUpSequence();
+        return;
+    }    
+    
+    if(!button.getDebState())
+        return;
+    
+    display.startFlash();
+    while(button.getState())
+    {
+        t.increment(5);
+        display.showTime(t); 
+        _delay_ms(250);
+    }
+    timer1.start_ms(2000);
+    
+    /*
+    
+    switch(state)
+    {
+        case OFF:
+            {
+                display.showTime(t);
+                timer1.start_ms(5000);
+                state = DISP;
+                break;
+            }
+            
+        case DISP:
+            {
+                timer1.start_ms(6000);
+                while(button.getState())
+                {
+                    if(state == PROG)
+                    {
+                        t += (5);
+                        display.showTime(t);
+                        _delay_ms(250);
+                    }
+                    else if(timer1.getTop() > 5000)
+                    {
+                        timer1.stop();
+                        state = PROG;
+                        break;
+                    }
+                }
+                display.startFlash(255);
+                timer1.start_ms(2000);
+                break;
+            }
+            
+        case PROG:
+        {
+            timer1.stop();
+            while(button.getState())
+            {
+                t.increment(5);
+                display.showTime(t);
+                _delay_ms(250);
+            }
+            timer1.start_ms(2000);
+            break;
+        }
+    }*/
 }
 
-void setClock()
-{
-	//CLKPR = _BV(CLKPCE); // enable clock prescaler change
-	//CLKPR = _BV(CLKPS0); // set clock prescaler to f/2;
-}
-
-
-
-void setTime()
-{
-	while(timer1.getCounter() < timer1.getTop()/2)
-	{
-		if(button.getState())
-		{
-			now.increment();
-			display.showTime(now);
-			timer1.resetCounter();
-			_delay_ms(750);
-		}
-	}
-}
 
 void setup()
 {
 	// disable all peripherals.
 	PRR = 0xFF;
 	
+    //setLowClockSpeed();
+    
+    /*
 	DDRA = 0xFF;
 	DDRB = 0xFF;
 	DDRC = 0xFF;
-	DDRD = 0xFF;
-	
-	// set sleep mode
-	set_sleep_mode(SM1); // full sleep mode
+	DDRD = 0xFF;*/
+    
+    button.enableInterrupt(onButtonPressed);
+    display.showTime(t);
+    
+    timer1.enableInterrupt(onTimerOut);
+    
 }
 
-#include <util/delay.h>
+
 
 int main()
 {
 	cli();
 	setup();
-	
-	LED l(&PORTC, 3);
-	Time t;
-	display.showTime(t);
-	display.startFlash(250);
 	sei();
 	
-	sleepNow();
-	
-	for(;;)
-	{
-	
-		display.showTime(t);
-		_delay_ms(500);
-		display.clear();
-		_delay_ms(500);
-		
-		// faire  flasher la DEL à 12h
-		/*PORTC = 1 << 3;
-		_delay_ms(500);
-		PORTC = 0;
-		_delay_ms(500);
-		/**/
-		
-		/*
-		// test de la classe LED
-		l.turnOn();
-		_delay_ms(500);
-		l.turnOff();
-		_delay_ms(500);
-		/**/
-	}
-	
-	
-	/*cli(); // disable interrupt
-	setup();
-	
-	button.enableInterrupt(buttonHandler);
-	
-	timer1.enableInterrupt(timer1Handler);
-	timer1.start(5000);       //minuterie de 5 secondes
-	sei();
-	
-	for(;;)	{	}*/
+	for(;;);
 	return 0; 
 }
 

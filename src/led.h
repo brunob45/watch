@@ -4,24 +4,13 @@
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
- * Date : 17 jan 2017
+ * Date : 13 fev 2017
  */
 
 #ifndef __LED_H__
 #define __LED_H__
 
 #include <avr/io.h>
-
-#define BUTTON  3              // D3
-
-#define SCL     PORTC5		      // C5
-#define SDA     PORTC4		      // C4
-
-#define MISO	PORTB4	
-#define MOSI	PORTB3	
-#define SCK 	PORTB5
-
-#define RST		PORTC7			  // C7
 
 
 class LED

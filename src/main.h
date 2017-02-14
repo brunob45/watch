@@ -4,7 +4,7 @@
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
- * Date : 17 jan 2017
+ * Date : 13 fev 2017
  */
 
 #ifndef __MAIN_H__
@@ -16,18 +16,9 @@
 #endif
 
 #include <avr/io.h> 
-#include "time.h"
+#include <avr/interrupt.h>
+#include <util/delay.h>
 
-Time now;
-
-void sleepNow();
-void partirMinuterie ( uint16_t duree_ms );
-void setup();
-void sleepNow();
-
-uint8_t getTime();
-void setTime();
-uint8_t saveTime();
 
 
 #endif

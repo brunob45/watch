@@ -4,7 +4,7 @@
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
- * Date : 17 jan 2017
+ * Date : 13 fev 2017
  */
 
 #include <avr/interrupt.h>
@@ -30,9 +30,9 @@ Timer0::Timer0(EventHandler handler)
 
 void Timer0::start(const uint8_t top)
 {
+	PRR &= ~_BV(PRTIM0);
 	TCNT0 = 0;
 	OCR0A = top;	//Counter compare value
-	PRR &= ~_BV(PRTIM0);
 }
 
 void Timer0::start_ms(const uint8_t top_ms)
@@ -53,8 +53,13 @@ void Timer0::stop()
 
 void Timer0::enableInterrupt(EventHandler handler)
 {
+	uint8_t PRR_old = PRR;
+	PRR &= ~_BV(PRTIM0);
+	
 	if(handler) onTimer0Out = handler;
 	TIMSK0 = _BV(OCIE0A);
+	
+	PRR = PRR_old;
 }
 
 void Timer0::disableInterrupt()
@@ -70,6 +75,21 @@ uint8_t Timer0::getCounter()
 uint8_t Timer0::getTime()
 {
 	return getCounter() * F_CPU / TIMER_PRESCALER / 1000;
+}
+
+void Timer0::resetCounter(uint8_t cnt)
+{
+	TCNT0 = cnt;
+}
+
+uint16_t Timer0::getTop()
+{
+	return OCR0A;
+}
+
+uint8_t Timer0::isActive()
+{
+    return PRR & _BV(PRTIM0);
 }
 
 ISR(TIMER0_COMPA_vect)

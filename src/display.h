@@ -4,14 +4,14 @@
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
- * Date : 17 jan 2017
+ * Date : 13 fev 2017
  */
 
 #ifndef __DISPLAY_H__
 #define __DISPLAY_H__
 
 #include "led.h"
-#include "time.h"
+#include "time.hpp"
 #include <avr/io.h>
 
 class Display
@@ -27,10 +27,8 @@ public:
 	void clear();
 	void showTime();
 	void showTime(Time t);
-	void startFlash(uint8_t delay);
+	void startFlash(uint8_t delay = 255);
 	void stopFlash();
-	
-	static void onTimerOut();
 };
 
 extern Display display;
