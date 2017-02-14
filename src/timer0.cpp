@@ -42,8 +42,8 @@ void Timer0::start_ms(const uint8_t top_ms)
 
 void Timer0::restart()
 {
-	TCNT1 = 0;
-	PRR &= ~_BV(PRTIM1);
+	PRR &= ~_BV(PRTIM0);
+	TCNT0 = 0;
 }
 
 void Timer0::stop()

@@ -11,7 +11,7 @@
 #define __RTC_H__
 
 #include <avr/io.h>
-#include "time.h"
+#include "time.hpp"
 #include "twi.h"
 
 class RTC

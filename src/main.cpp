@@ -13,6 +13,7 @@
 #include "time.hpp"
 #include "button.h"
 #include <util/delay.h>
+#include <avr/sleep.h>
 
 
 volatile uint8_t ledState = 0;
@@ -30,19 +31,46 @@ void setLowClockSpeed()
 	CLKPR = _BV(CLKPS2) | _BV(CLKPS0); // set clock prescaler to 32 (8MHz /32 = 250kHz)
 }*/
 
+void wakeUpSequence()
+{
+    display.showTime(t);
+    
+    _delay_ms(100); // make sure button isn't bouncing
+    
+    timer1.start(5000);
+    wakeUpDone = 1;
+}
 
-void onTimerOut(void)
+void sleepNow()
+{
+	//http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
+	set_sleep_mode(SM1); // full sleep mode
+    cli();
+	//if(sleep)
+	{
+		sleep_enable();
+        sleep_bod_disable();
+		sei();
+		sleep_cpu();
+		sleep_disable();
+	}
+	sei();
+}
+
+void sleepSequence()
 {
 	display.stopFlash();
     timer1.stop();
     display.clear();
-    wakeUpDone = 0;
+    wakeUpDone = 0;    
+    sleepNow();
 }
 
-void wakeUpSequence()
+void onTimerOut(void)
 {
-    display.showTime(t);
-    wakeUpDone = 1;
+    cli();
+    sleepSequence();
+    sei();
 }
 
 void onButtonPressed(void)
@@ -63,7 +91,7 @@ void onButtonPressed(void)
         display.showTime(t); 
         _delay_ms(250);
     }
-    timer1.start_ms(2000);
+    timer1.start(2000);
     
     /*
     
@@ -130,10 +158,9 @@ void setup()
 	DDRD = 0xFF;*/
     
     button.enableInterrupt(onButtonPressed);
-    display.showTime(t);
-    
     timer1.enableInterrupt(onTimerOut);
     
+    wakeUpSequence();
 }
 
 

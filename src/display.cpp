@@ -78,8 +78,8 @@ void Display::clear()
 
 void Display::startFlash(uint8_t delay)
 {
-    timer0.start_ms(delay);
-	timer0.enableInterrupt(onTimerOut);
+    timer0.enableInterrupt(onTimerOut);
+    timer0.start(delay);
 }
 
 void Display::stopFlash()

@@ -41,19 +41,5 @@ public :
         m %= 60;
         s %= 60;
 	}
-    /*
-    Time operator+ (uint8_t r)
-    {
-        return Time(h, m+r, s);
-    }
-    Time operator++ ()
-    {
-        return Time(h, m+1, s);
-    }
-    
-   Time operator+= (uint8_t r)
-    {
-        return Time(h, m+r, s);
-    }*/
 };
 #endif
