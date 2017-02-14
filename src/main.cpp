@@ -4,7 +4,7 @@
  * License http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * Description:
  * Version: 1.0
- * Date : 13 fev 2017
+ * Date : 22 fev 2017
  */
 
 #include "main.h"
@@ -15,14 +15,32 @@
 #include <util/delay.h>
 #include <avr/sleep.h>
 
+enum state_t {SLEEP, DISP, PROG};
+volatile state_t state = SLEEP;
+void nextState()
+{
+    switch(state)
+    {
+        case SLEEP:
+            state = DISP;
+            break;
+        case DISP:
+            state = PROG;
+            break;
+        case PROG:
+            state = DISP;
+            break;
+    }
+}
+
 
 volatile uint8_t ledState = 0;
-volatile uint8_t wakeUpDone = 0;
 static Time t;
 
 Timer1 timer1;
 Display display;
 Button button;
+
 
 /*
 void setLowClockSpeed()
@@ -38,7 +56,6 @@ void wakeUpSequence()
     _delay_ms(100); // make sure button isn't bouncing
     
     timer1.start(5000);
-    wakeUpDone = 1;
 }
 
 void sleepNow()
@@ -57,90 +74,53 @@ void sleepNow()
 	sei();
 }
 
-void sleepSequence()
-{
-	display.stopFlash();
-    timer1.stop();
-    display.clear();
-    wakeUpDone = 0;    
-    sleepNow();
-}
-
-void onTimerOut(void)
+void sleepSequence(void)
 {
     cli();
-    sleepSequence();
+    {
+        display.stopFlash();
+        timer1.stop();
+        display.clear();
+        state = SLEEP;    
+        sleepNow();
+    }
     sei();
 }
 
 void onButtonPressed(void)
 {
-    if(!wakeUpDone)
-    {
-        wakeUpSequence();
-        return;
-    }    
-    
-    if(!button.getDebState())
-        return;
-    
-    display.startFlash();
-    while(button.getState())
-    {
-        t.increment(5);
-        display.showTime(t); 
-        _delay_ms(250);
-    }
-    timer1.start(2000);
-    
-    /*
-    
     switch(state)
     {
-        case OFF:
-            {
-                display.showTime(t);
-                timer1.start_ms(5000);
-                state = DISP;
-                break;
-            }
-            
+        case SLEEP:
+        {
+            wakeUpSequence();
+            nextState();
+            break;
+        }
         case DISP:
-            {
-                timer1.start_ms(6000);
-                while(button.getState())
-                {
-                    if(state == PROG)
-                    {
-                        t += (5);
-                        display.showTime(t);
-                        _delay_ms(250);
-                    }
-                    else if(timer1.getTop() > 5000)
-                    {
-                        timer1.stop();
-                        state = PROG;
-                        break;
-                    }
-                }
-                display.startFlash(255);
-                timer1.start_ms(2000);
+        {
+            if(!button.getDebState())
                 break;
-            }
-            
+
+            nextState();
+            break;
+        }
         case PROG:
         {
-            timer1.stop();
+            if(!button.getDebState())
+                break;
+
+            display.startFlash();
             while(button.getState())
             {
                 t.increment(5);
-                display.showTime(t);
+                display.showTime(t); 
                 _delay_ms(250);
             }
-            timer1.start_ms(2000);
+            timer1.start(2000);
             break;
         }
-    }*/
+    }
 }
 
 
@@ -158,7 +138,7 @@ void setup()
 	DDRD = 0xFF;*/
     
     button.enableInterrupt(onButtonPressed);
-    timer1.enableInterrupt(onTimerOut);
+    timer1.enableInterrupt(sleepSequence);
     
     wakeUpSequence();
 }

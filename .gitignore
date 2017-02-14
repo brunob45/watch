@@ -32,3 +32,4 @@
 *.hex
 src2/
 PCB/Archives/
+src/.vscode/
