@@ -13,34 +13,14 @@
 #include "time.hpp"
 #include "button.h"
 #include "rtc.h"
+#include "state.hpp"
+
 #include <util/delay.h>
 #include <avr/sleep.h>
 
-enum state_t
-{
-    SLEEP,
-    DISP,
-    PROG
-};
-volatile state_t state = SLEEP;
-void nextState()
-{
-    switch (state)
-    {
-    case SLEEP:
-        state = DISP;
-        break;
-    case DISP:
-        state = PROG;
-        break;
-    case PROG:
-        state = DISP;
-        break;
-    }
-}
-
+volatile STATE::state_t state = STATE::SLEEP;
 volatile uint8_t ledState = 0;
-static Time t;
+Time time;
 
 Timer1 timer1;
 Display display;
@@ -56,8 +36,8 @@ void setLowClockSpeed()
 
 void wakeUpSequence()
 {
-    t = rtc.getTime();
-    display.showTime(t);
+    time = rtc.getTime();
+    display.showTime(time);
     timer1.start(5000);
     _delay_ms(100); // make sure button isn't bouncing
 }
@@ -81,10 +61,15 @@ void sleepSequence(void)
 {
     cli();
     {
+        if (state == STATE::PROG)
+        {
+            rtc.setTime(time);
+        }
+
         display.stopFlash();
         timer1.stop();
         display.clear();
-        state = SLEEP;
+        state = STATE::SLEEP;
         sleepNow();
     }
     sei();
@@ -94,35 +79,31 @@ void onButtonPressed(void)
 {
     switch (state)
     {
-    case SLEEP:
-    {
+    case STATE::SLEEP:
         wakeUpSequence();
-        nextState();
+        STATE::nextState(state);
         break;
-    }
-    case DISP:
-    {
-        if (!button.getDebState())
-            break;
 
-        nextState();
-        break;
-    }
-    case PROG:
-    {
-        if (!button.getDebState())
-            break;
-
-        display.startFlash();
-        while (button.getState())
+    case STATE::DISP:
+        if (button.getDebState())
         {
-            t.increment(5);
-            display.showTime(t);
-            _delay_ms(250);
+            STATE::nextState(state);
         }
-        timer1.start(2000);
         break;
-    }
+
+    case STATE::PROG:
+        if (button.getDebState())
+        {
+            display.startFlash();
+            while (button.getState())
+            {
+                time.increment(5);
+                display.showTime(time);
+                _delay_ms(250);
+            }
+            timer1.start(2000);
+        }
+        break;
     }
 }
 
@@ -132,12 +113,6 @@ void setup()
     PRR = 0xFF;
 
     //setLowClockSpeed();
-
-    /*
-	DDRA = 0xFF;
-	DDRB = 0xFF;
-	DDRC = 0xFF;
-	DDRD = 0xFF;*/
 
     button.enableInterrupt(onButtonPressed);
     timer1.enableInterrupt(sleepSequence);

@@ -39,12 +39,11 @@ uint8_t RTC::setTime(Time t)
     twi.write(_reg);
 
     twi.write(t.s);
-    twi.start();
-
+    
     twi.write(t.m);
-    twi.start();
-
+    
     twi.write(t.h);
+    
     twi.stop();
 
     return 0;

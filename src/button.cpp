@@ -20,7 +20,7 @@ Button::Button()
 {
     // mettre le bouton en entree
     DDRD &= ~_BV(3);
-    // d�sactiver le Pull-Up resistor
+    // desactiver le Pull-Up resistor
     PORTD &= ~_BV(3);
 
     // il faut sensibiliser les interruptions externes aux
@@ -44,7 +44,9 @@ uint8_t Button::getState()
 void Button::enableInterrupt(EventHandler handler = 0)
 {
     if (handler)
-		onButtonPressed = handler;
+    {
+        onButtonPressed = handler;
+    }
     EIMSK |= _BV(INT1);
 }
 
@@ -56,5 +58,7 @@ void Button::disableInterrupt()
 ISR(INT1_vect)
 {
     if (onButtonPressed)
-		onButtonPressed();
+    {
+        onButtonPressed();
+    }
 }

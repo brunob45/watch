@@ -11,11 +11,12 @@
 #include "timer0.h"
 #include <util/delay.h>
 
-static uint8_t showing = 0;
-Time displayTime;
+extern Display display;
+
 Timer0 timer0;
 
-extern Display display;
+static uint8_t showing = 0;
+static Time diplayTime;
 
 static void onTimerOut()
 {
@@ -56,7 +57,7 @@ Display::Display()
 
 void Display::showTime()
 {
-    showTime(displayTime);
+    showTime(diplayTime);
 }
 
 void Display::showTime(Time t)
@@ -64,9 +65,9 @@ void Display::showTime(Time t)
     if (showing)
 		clear(); // clear old time
 
-    displayTime = t;
-    H[displayTime.h % 12].turnOn();
-    M[displayTime.m / 5].turnOn();
+    diplayTime = t;
+    H[diplayTime.h % 12].turnOn();
+    M[diplayTime.m / 5].turnOn();
 
     timer0.resetCounter(); // reset blinking timer
     showing = 1;
@@ -74,8 +75,8 @@ void Display::showTime(Time t)
 
 void Display::clear()
 {
-    H[displayTime.h % 12].turnOff();
-    M[displayTime.m / 5].turnOff();
+    H[diplayTime.h % 12].turnOff();
+    M[diplayTime.m / 5].turnOff();
     showing = 0;
 }
 
