@@ -14,21 +14,19 @@
 
 class Button
 {
-public:
-	Button();
-	~Button() {  }
+  public:
+    Button();
+    ~Button() {}
 
-	uint8_t getDebState();
-	uint8_t getState();
-	
-	void enableInterrupt(void (*handler)(void));
-	void disableInterrupt();
+    uint8_t getDebState();
+    uint8_t getState();
+
+    void enableInterrupt(void (*handler)(void));
+    void disableInterrupt();
 };
 
 extern Button button;
 
-#else 
+#else
 #warning "button already in use."
 #endif
-
-

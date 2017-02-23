@@ -14,32 +14,34 @@
 
 class Time
 {
-public :
-	uint8_t h;
-	uint8_t m;
-	uint8_t s;
-public :
-	Time(uint8_t _h = 0, uint8_t _m = 0, uint8_t _s = 0)
-        : h(_h), m(_m), s(_s)
+  public:
+    uint8_t h;
+    uint8_t m;
+    uint8_t s;
+
+  public:
+    Time(uint8_t _h = 0, uint8_t _m = 0, uint8_t _s = 0)
+	: h(_h), m(_m), s(_s)
     {
-        normalize();
+		normalize();
     }
-    ~Time() {  }
-    
-	void increment(uint8_t minutes = 5)
-	{
-		uint8_t m_temp = this->m + minutes; 
-		this->m = m_temp %60;
-		this->h = (this->h + (m_temp/60)) %24;
-	}
-	void normalize()
-	{
-        m += s/60;
-        h += m/60;
-        
-        h %= 24;
-        m %= 60;
-        s %= 60;
-	}
+    ~Time() {}
+
+    void increment(uint8_t minutes = 5)
+    {
+		uint8_t m_temp = this->m + minutes;
+		this->m = m_temp % 60;
+		this->h = (this->h + (m_temp / 60)) % 24;
+    }
+    void normalize()
+    {
+		m += s / 60;
+		h += m / 60;
+
+		h %= 24;
+		m %= 60;
+		s %= 60;
+    }
 };
+
 #endif

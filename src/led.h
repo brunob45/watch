@@ -12,26 +12,28 @@
 
 #include <avr/io.h>
 
-
 class LED
 {
-	volatile uint8_t *_port;
-	uint8_t _bit;
-public:
-	LED() : _port(0), _bit(0){}
-	LED(volatile uint8_t *port, uint8_t bit) : _port(port), _bit(bit) 
-	{
+    volatile uint8_t *_port;
+    uint8_t _bit;
+
+  public:
+    LED() : _port(0), _bit(0) {}
+    LED(volatile uint8_t *port, uint8_t bit) : _port(port), _bit(bit)
+    {
 		// set LED pin as output
-		*(_port-1) |= _BV(_bit);
-	}
-	void turnOn()
-	{
-		if(_port) *_port |= _BV(_bit);
-	}
-	void turnOff()
-	{
-		if(_port) *_port &= ~_BV(_bit);
-	}
+		*(_port - 1) |= _BV(_bit);
+    }
+    void turnOn()
+    {
+		if (_port)
+			*_port |= _BV(_bit);
+    }
+    void turnOff()
+    {
+		if (_port)
+			*_port &= ~_BV(_bit);
+    }
 };
 
 #endif

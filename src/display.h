@@ -16,19 +16,20 @@
 
 class Display
 {
-private:
-	LED H[12];
-	LED M[12];
+  private:
+    LED H[12];
+    LED M[12];
 
-public:
-	Display();
-	~Display() {  }
+  public:
+    Display();
+    ~Display() {}
 
-	void clear();
-	void showTime();
-	void showTime(Time t);
-	void startFlash(uint8_t delay = 255);
-	void stopFlash();
+    void clear();
+    void showTime();
+    void showTime(Time t);
+    void startFlash(uint8_t delay = 255);
+    void stopFlash();
+    void toggle();
 };
 
 extern Display display;

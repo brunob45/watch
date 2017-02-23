@@ -12,71 +12,73 @@
 
 TWI::TWI()
 {
-	disable();
+    disable();
 }
 
 TWI::~TWI()
 {
-	disable();
+    disable();
 }
 
 void TWI::start()
 {
-	enable();
-	sendStartCondition();
+
+    enable();
+    sendStartCondition();
 }
 
 void TWI::stop()
 {
-	sendStopCondition();
-	disable();
+    sendStopCondition();
+    disable();
 }
 
 void TWI::restart()
 {
-	sendStopCondition();
-	sendStartCondition();
+    sendStopCondition();
+    sendStartCondition();
 }
 
-void TWI::read(uint8_t& t, uint8_t ack)
+void TWI::read(uint8_t &t, uint8_t ack)
 {
-	if(ack)
-		TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
-	else
-		TWCR = _BV(TWINT) | _BV(TWEN);
+    TWCR = _BV(TWINT) | _BV(TWEN) | (ack ? _BV(TWEA) : 0);
 
-	while ((TWCR & _BV(TWINT)) == 0);
+    while ((TWCR & _BV(TWINT)) == 0)
+	;
     t = TWDR;
 }
 
 void TWI::write(uint8_t t)
 {
-	TWDR = t;
-	TWCR = _BV(TWINT) | _BV(TWEN);
-	while ((TWCR & _BV(TWINT)) == 0);
+    TWDR = t;
+    TWCR = _BV(TWINT) | _BV(TWEN);
+    while ((TWCR & _BV(TWINT)) == 0)
+	;
 }
 
 void TWI::enable()
 {
-	PRR &= ~_BV(PRTWI); //enable clock to module
-	TWSR = 0;  // Initialisation de l'horloge de l'interface I2C
-	TWBR = MAX((F_CPU  / F_TWI - 16) / 2, 10); // prediviseur
-	TWHSR = 0; // _BV(TWIHS); // clock source = F_CPU * 2   /!\ Dont need to /!\ */
+    PRR &= ~_BV(PRTWI);			      //enable clock to module
+    TWSR = 0;				      // Initialisation de l'horloge de l'interface I2C
+    TWBR = MAX((F_CPU / F_TWI - 16) / 2, 10); // prediviseur
+    TWHSR = 0;				      // _BV(TWIHS); // clock source = F_CPU * 2   /!\ Dont need to /!\ */
 }
 
 void TWI::disable()
 {
-	PRR |= _BV(PRTWI); //disable clock to module
+    PRR |= _BV(PRTWI); //disable clock to module
 }
 
 void TWI::sendStartCondition()
 {
-	TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN); // Condition de depart
-	while ((TWCR & _BV(TWINT)) == 0);      		// Attente de fin de transmission
+    TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN); // Condition de depart
+    while ((TWCR & _BV(TWINT)) == 0)
+	; // Attente de fin de transmission
 }
 
 void TWI::sendStopCondition()
 {
-	TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN); // Condition de depart
-	while ((TWCR & _BV(TWINT)) == 0);      		// Attente de fin de transmission
+    TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN); // Condition de depart
+    for (uint8_t i = 0; i < TWBR; i++)
+	; // Attendre que la condition soit transmise
 }

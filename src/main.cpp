@@ -12,27 +12,32 @@
 #include "timer1.h"
 #include "time.hpp"
 #include "button.h"
+#include "rtc.h"
 #include <util/delay.h>
 #include <avr/sleep.h>
 
-enum state_t {SLEEP, DISP, PROG};
+enum state_t
+{
+    SLEEP,
+    DISP,
+    PROG
+};
 volatile state_t state = SLEEP;
 void nextState()
 {
-    switch(state)
+    switch (state)
     {
-        case SLEEP:
-            state = DISP;
-            break;
-        case DISP:
-            state = PROG;
-            break;
-        case PROG:
-            state = DISP;
-            break;
+    case SLEEP:
+        state = DISP;
+        break;
+    case DISP:
+        state = PROG;
+        break;
+    case PROG:
+        state = DISP;
+        break;
     }
 }
-
 
 volatile uint8_t ledState = 0;
 static Time t;
@@ -40,7 +45,7 @@ static Time t;
 Timer1 timer1;
 Display display;
 Button button;
-
+RTC rtc;
 
 /*
 void setLowClockSpeed()
@@ -51,27 +56,25 @@ void setLowClockSpeed()
 
 void wakeUpSequence()
 {
+    t = rtc.getTime();
     display.showTime(t);
-    
-    _delay_ms(100); // make sure button isn't bouncing
-    
     timer1.start(5000);
+    _delay_ms(100); // make sure button isn't bouncing
 }
 
 void sleepNow()
 {
-	//http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
-	set_sleep_mode(SM1); // full sleep mode
+    //http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
+    set_sleep_mode(SM1); // full sleep mode
     cli();
-	//if(sleep)
-	{
-		sleep_enable();
+    {
+        sleep_enable();
         sleep_bod_disable();
-		sei();
-		sleep_cpu();
-		sleep_disable();
-	}
-	sei();
+        sei();
+        sleep_cpu();
+        sleep_disable();
+    }
+    sei();
 }
 
 void sleepSequence(void)
@@ -81,7 +84,7 @@ void sleepSequence(void)
         display.stopFlash();
         timer1.stop();
         display.clear();
-        state = SLEEP;    
+        state = SLEEP;
         sleepNow();
     }
     sei();
@@ -89,69 +92,69 @@ void sleepSequence(void)
 
 void onButtonPressed(void)
 {
-    switch(state)
+    switch (state)
     {
-        case SLEEP:
-        {
-            wakeUpSequence();
-            nextState();
+    case SLEEP:
+    {
+        wakeUpSequence();
+        nextState();
+        break;
+    }
+    case DISP:
+    {
+        if (!button.getDebState())
             break;
-        }
-        case DISP:
-        {
-            if(!button.getDebState())
-                break;
 
-            nextState();
+        nextState();
+        break;
+    }
+    case PROG:
+    {
+        if (!button.getDebState())
             break;
-        }
-        case PROG:
-        {
-            if(!button.getDebState())
-                break;
 
-            display.startFlash();
-            while(button.getState())
-            {
-                t.increment(5);
-                display.showTime(t); 
-                _delay_ms(250);
-            }
-            timer1.start(2000);
-            break;
+        display.startFlash();
+        while (button.getState())
+        {
+            t.increment(5);
+            display.showTime(t);
+            _delay_ms(250);
         }
+        timer1.start(2000);
+        break;
+    }
     }
 }
 
-
 void setup()
 {
-	// disable all peripherals.
-	PRR = 0xFF;
-	
+    // disable all peripherals.
+    PRR = 0xFF;
+
     //setLowClockSpeed();
-    
+
     /*
 	DDRA = 0xFF;
 	DDRB = 0xFF;
 	DDRC = 0xFF;
 	DDRD = 0xFF;*/
-    
+
     button.enableInterrupt(onButtonPressed);
     timer1.enableInterrupt(sleepSequence);
-    
+
     wakeUpSequence();
 }
 
-
-
 int main()
 {
-	cli();
-	setup();
-	sei();
-	
-	for(;;);
-	return 0; 
-}
+    cli();
+    {
+        setup();
+    }
+    sei();
 
+    for (;;)
+        ;
+
+    return 0;
+}

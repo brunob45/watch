@@ -12,20 +12,19 @@
 
 #include <avr/io.h>
 #include "time.hpp"
-#include "twi.h"
 
 class RTC
 {
-private:
-	const uint8_t _address;
-	const uint8_t _reg;
+  private:
+    const uint8_t _address;
+    const uint8_t _reg;
 
-public:
-	RTC(uint8_t address = 0xA2, uint8_t reg = 0x0A) : _address(address), _reg(reg) {  }
-	~RTC() {  }
-	
-	Time getTime();
-	uint8_t setTime(Time);
+  public:
+    RTC(uint8_t address = 0xA2, uint8_t reg = 0x04) : _address(address), _reg(reg) {}
+    ~RTC() {}
+
+    Time getTime();
+    uint8_t setTime(Time);
 };
 
 extern RTC rtc;

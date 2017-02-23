@@ -8,43 +8,44 @@
  */
 
 #include "rtc.h"
+#include "twi.h"
 
 TWI twi;
 
 Time RTC::getTime()
 {
-	Time t;
+    Time t;
 
-	twi.start();
-	twi.write(_address);
-	twi.write(_reg);
-	twi.restart();
-	
-	twi.write(_address + 1);
-	twi.read(t.s, 1);
-	twi.read(t.m, 1);
-	twi.read(t.h, 0);
-	
-	twi.stop();
-	
-	return t;
+    twi.start();
+    twi.write(_address);
+    twi.write(_reg);
+    twi.restart();
+
+    twi.write(_address + 1);
+    twi.read(t.s, 1);
+    twi.read(t.m, 1);
+    twi.read(t.h, 0);
+
+    twi.stop();
+
+    t.normalize();
+    return t;
 }
 
 uint8_t RTC::setTime(Time t)
 {
-	twi.start();
-	twi.write(_address);
-	twi.write(_reg);
-	
-	twi.write(t.s);
-	twi.start();
-	
-	twi.write(t.m);
-	twi.start();
-	
-	twi.write(t.h);
-	twi.stop();
-	
-	return 0;
-}
+    twi.start();
+    twi.write(_address);
+    twi.write(_reg);
 
+    twi.write(t.s);
+    twi.start();
+
+    twi.write(t.m);
+    twi.start();
+
+    twi.write(t.h);
+    twi.stop();
+
+    return 0;
+}

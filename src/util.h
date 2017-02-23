@@ -12,9 +12,9 @@
 
 #include <avr/io.h>
 
-typedef void (*EventHandler) (void);
+typedef void (*EventHandler)(void);
 
-#define MIN(x,y) (x < y ? x : y)
-#define MAX(x,y) (x > y ? x : y)
+#define MIN(x, y) (x < y ? x : y)
+#define MAX(x, y) (x > y ? x : y)
 
 #endif

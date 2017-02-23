@@ -71,7 +71,7 @@ MCU=attiny88
 
 F_CPU = 1000000 
 #250000
-#F_TWI = 6944
+F_TWI = 100000
 
 ISP=usbasp
 
