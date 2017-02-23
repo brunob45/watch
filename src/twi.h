@@ -14,23 +14,21 @@
 
 class TWI
 {
-  public:
-    TWI();
-    ~TWI();
-    void start();
-    void stop();
-    void restart();
-    void write(uint8_t t);
-    void read(uint8_t &t, uint8_t ack = 0);
+public:
+  TWI();
+  ~TWI();
+  void start();
+  void stop();
+  void restart();
+  void write(uint8_t t);
+  void read(uint8_t &t, uint8_t ack = 0);
 
-  private:
-    void enable();
-    void disable();
-    void sendStartCondition();
-    void sendStopCondition();
+private:
+  void enable();
+  void disable();
+  void sendStartCondition();
+  void sendStopCondition();
 };
-
-extern TWI twi;
 
 #else
 #warning "TWI already in use."

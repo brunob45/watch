@@ -14,27 +14,25 @@
 
 class Timer0
 {
-  public:
-    Timer0(EventHandler handler = 0);
-    ~Timer0() {}
+public:
+  Timer0(EventHandler handler = 0);
+  ~Timer0() {}
 
-    void start(const uint8_t top = 255);
-    void start_ms(const uint8_t top_ms = 255);
-    void restart();
-    void stop();
+  void start(const uint8_t top = 255);
+  void start_ms(const uint8_t top_ms = 255);
+  void restart();
+  void stop();
 
-    void enableInterrupt(EventHandler handler = 0);
-    void disableInterrupt();
+  void enableInterrupt(EventHandler handler = 0);
+  void disableInterrupt();
 
-    uint8_t getCounter();
-    uint8_t getTime();
-    uint8_t isActive();
+  uint8_t getCounter();
+  uint8_t getTime();
+  uint8_t isActive();
 
-    void resetCounter(uint8_t cnt = 0);
-    uint16_t getTop();
+  void resetCounter(uint8_t cnt = 0);
+  uint16_t getTop();
 };
-
-extern Timer0 timer0;
 
 #else
 #warning "timer0 already in use."

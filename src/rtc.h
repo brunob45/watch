@@ -27,8 +27,6 @@ class RTC
     uint8_t setTime(Time);
 };
 
-extern RTC rtc;
-
 #else
 #warning "RTC already in use."
 #endif

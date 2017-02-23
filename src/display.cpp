@@ -15,6 +15,8 @@ static uint8_t showing = 0;
 Time displayTime;
 Timer0 timer0;
 
+extern Display display;
+
 static void onTimerOut()
 {
     if (showing)

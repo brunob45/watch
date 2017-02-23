@@ -32,8 +32,6 @@ class Display
     void toggle();
 };
 
-extern Display display;
-
 #else
 #warning "display already in use."
 #endif

@@ -25,8 +25,6 @@ class Button
     void disableInterrupt();
 };
 
-extern Button button;
-
 #else
 #warning "button already in use."
 #endif
