@@ -19,4 +19,12 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
+void wakeUpSequence();
+void sleepSequence();
+void sleepNow();
+void setTime();
+void onButtonPressed();
+void setup();
+
+
 #endif

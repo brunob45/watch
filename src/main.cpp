@@ -27,57 +27,7 @@ Display display;
 Button button;
 RTC rtc;
 
-/*
-void setLowClockSpeed()
-{
-	CLKPR = _BV(CLKPCE);
-	CLKPR = _BV(CLKPS2) | _BV(CLKPS0); // set clock prescaler to 32 (8MHz /32 = 250kHz)
-}*/
-
-void wakeUpSequence()
-{
-    time = rtc.getTime();
-    display.showTime(time);
-    sleepTimer.start(5000);
-}
-
-void sleepNow()
-{
-    //http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
-    set_sleep_mode(SM1); // full sleep mode
-    cli();
-    {
-        sleep_enable();
-        sleep_bod_disable();
-        sei();
-        sleep_cpu();
-        sleep_disable();
-    }
-    sei();
-}
-
-void sleepSequence(void)
-{
-    cli();
-    {
-        if (state == STATE::PROG)
-        {
-            rtc.setTime(time);
-        }
-
-        sleepTimer.stop();
-
-        display.stopFlash();
-        display.clear();
-
-        state = STATE::SLEEP;
-
-        sleepNow();
-    }
-    sei();
-}
-
-void onButtonPressed(void)
+void onButtonPressed()
 {
     if (!button.isDbPressed())
     {
@@ -97,24 +47,7 @@ void onButtonPressed(void)
 
     case STATE::PROG:
         sleepTimer.stop();
-
-        uint8_t cnt = 0;
-        display.startFlash();
-        while (button.isPressed())
-        {
-            time.increment(5);
-            display.showTime(time);
-            if (cnt < 5)
-            {
-                _delay_ms(250);
-                cnt++;
-            }
-            else
-            {
-                _delay_ms(100);
-            }
-        }
-
+        setTime();
         sleepTimer.start(2000);
         break;
     }
@@ -141,8 +74,77 @@ int main()
     }
     sei();
 
-    for (;;)
-        ;
+    for (;;) ;
 
     return 0;
+}
+
+/*
+void setLowClockSpeed()
+{
+	CLKPR = _BV(CLKPCE);
+	CLKPR = _BV(CLKPS2) | _BV(CLKPS0); // set clock prescaler to 32 (8MHz /32 = 250kHz)
+}*/
+
+void setTime()
+{
+    uint8_t cnt = 0;
+    display.startFlash();
+    while (button.isPressed())
+    {
+        time.increment(5);
+        display.showTime(time);
+        if (cnt < 5)
+        {
+            _delay_ms(250);
+            cnt++;
+        }
+        else
+        {
+            _delay_ms(100);
+        }
+    }
+}
+
+void wakeUpSequence()
+{
+    time = rtc.getTime();
+    display.showTime(time);
+    sleepTimer.start(5000);
+}
+
+void sleepSequence()
+{
+    cli();
+    {
+        if (state == STATE::PROG)
+        {
+            rtc.setTime(time);
+        }
+
+        sleepTimer.stop();
+
+        display.stopFlash();
+        display.clear();
+
+        state = STATE::SLEEP;
+
+        sleepNow();
+    }
+    sei();
+}
+
+void sleepNow()
+{
+    //http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
+    set_sleep_mode(SM1); // full sleep mode
+    cli();
+    {
+        sleep_enable();
+        sleep_bod_disable();
+        sei();
+        sleep_cpu();
+        sleep_disable();
+    }
+    sei();
 }
