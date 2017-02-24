@@ -29,16 +29,15 @@ Button::Button()
     EICRA = _BV(ISC11);
 }
 
-uint8_t Button::getDebState()
+uint8_t Button::isDbPressed()
 {
-    //uint8_t new_state = getState();
     _delay_ms(50);
-    return getState(); //(_state = getState()) == new_state;
+    return isPressed();
 }
 
-uint8_t Button::getState()
+uint8_t Button::isPressed()
 {
-    return _state = !(PIND & _BV(3));
+    return _state = !(PIND & _BV(PD3));
 }
 
 void Button::enableInterrupt(EventHandler handler = 0)

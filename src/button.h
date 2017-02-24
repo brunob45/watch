@@ -18,8 +18,8 @@ class Button
     Button();
     ~Button() {}
 
-    uint8_t getDebState();
-    uint8_t getState();
+    uint8_t isDbPressed();
+    uint8_t isPressed();
 
     void enableInterrupt(void (*handler)(void));
     void disableInterrupt();

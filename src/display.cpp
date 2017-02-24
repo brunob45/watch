@@ -16,7 +16,7 @@ extern Display display;
 Timer0 timer0;
 
 static uint8_t showing = 0;
-static Time diplayTime;
+static Time displayTime;
 
 static void onTimerOut()
 {
@@ -57,7 +57,7 @@ Display::Display()
 
 void Display::showTime()
 {
-    showTime(diplayTime);
+    showTime(displayTime);
 }
 
 void Display::showTime(Time t)
@@ -65,9 +65,9 @@ void Display::showTime(Time t)
     if (showing)
 		clear(); // clear old time
 
-    diplayTime = t;
-    H[diplayTime.h % 12].turnOn();
-    M[diplayTime.m / 5].turnOn();
+    displayTime = t;
+    H[displayTime.h % 12].turnOn();
+    M[displayTime.m / 5].turnOn();
 
     timer0.resetCounter(); // reset blinking timer
     showing = 1;
@@ -75,8 +75,8 @@ void Display::showTime(Time t)
 
 void Display::clear()
 {
-    H[diplayTime.h % 12].turnOff();
-    M[diplayTime.m / 5].turnOff();
+    H[displayTime.h % 12].turnOff();
+    M[displayTime.m / 5].turnOff();
     showing = 0;
 }
 

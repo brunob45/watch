@@ -22,7 +22,7 @@ volatile STATE::state_t state = STATE::SLEEP;
 volatile uint8_t ledState = 0;
 Time time;
 
-Timer1 timer1;
+Timer1 sleepTimer;
 Display display;
 Button button;
 RTC rtc;
@@ -38,8 +38,7 @@ void wakeUpSequence()
 {
     time = rtc.getTime();
     display.showTime(time);
-    timer1.start(5000);
-    _delay_ms(100); // make sure button isn't bouncing
+    sleepTimer.start(5000);
 }
 
 void sleepNow()
@@ -66,10 +65,13 @@ void sleepSequence(void)
             rtc.setTime(time);
         }
 
+        sleepTimer.stop();
+
         display.stopFlash();
-        timer1.stop();
         display.clear();
+
         state = STATE::SLEEP;
+
         sleepNow();
     }
     sei();
@@ -77,6 +79,11 @@ void sleepSequence(void)
 
 void onButtonPressed(void)
 {
+    if (!button.isDbPressed())
+    {
+        return;
+    }
+
     switch (state)
     {
     case STATE::SLEEP:
@@ -85,24 +92,30 @@ void onButtonPressed(void)
         break;
 
     case STATE::DISP:
-        if (button.getDebState())
-        {
-            STATE::nextState(state);
-        }
+        STATE::nextState(state);
         break;
 
     case STATE::PROG:
-        if (button.getDebState())
+        sleepTimer.stop();
+
+        uint8_t cnt = 0;
+        display.startFlash();
+        while (button.isPressed())
         {
-            display.startFlash();
-            while (button.getState())
+            time.increment(5);
+            display.showTime(time);
+            if (cnt < 5)
             {
-                time.increment(5);
-                display.showTime(time);
                 _delay_ms(250);
+                cnt++;
             }
-            timer1.start(2000);
+            else
+            {
+                _delay_ms(100);
+            }
         }
+
+        sleepTimer.start(2000);
         break;
     }
 }
@@ -115,7 +128,7 @@ void setup()
     //setLowClockSpeed();
 
     button.enableInterrupt(onButtonPressed);
-    timer1.enableInterrupt(sleepSequence);
+    sleepTimer.enableInterrupt(sleepSequence);
 
     wakeUpSequence();
 }

@@ -29,9 +29,8 @@ class Time
 
     void increment(uint8_t minutes = 5)
     {
-      uint8_t m_temp = this->m + minutes;
-      this->m = m_temp % 60;
-      this->h = (this->h + (m_temp / 60)) % 24;
+      m += minutes;
+      normalize();
     }
     void normalize()
     {
