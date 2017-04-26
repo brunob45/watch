@@ -2,12 +2,10 @@
 #define __BCD_HPP__
 
 #define LSB 0x0F
-#define MSB 0xF0
-#define BCD_MASK 0x7F
+#define MSB 0x70
 
 static uint8_t BCDtoBIN(uint8_t u)
 {
-    u &= BCD_MASK;
     return (u & LSB) + (((u & MSB) >> 4) * 10);
 }
 
