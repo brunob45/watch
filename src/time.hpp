@@ -27,11 +27,6 @@ class Time
     }
     ~Time() {}
 
-    void increment(uint8_t minutes = 5)
-    {
-      m += minutes;
-      normalize();
-    }
     void normalize()
     {
       m += s / 60;
@@ -40,6 +35,13 @@ class Time
       h %= 24;
       m %= 60;
       s %= 60;
+    }
+
+    void next(uint8_t minutes)
+    {
+      m += minutes - (m % minutes);
+      s = 0;
+      normalize();
     }
 };
 

@@ -79,12 +79,6 @@ int main()
     return 0;
 }
 
-/*
-void setLowClockSpeed()
-{
-	CLKPR = _BV(CLKPCE);
-	CLKPR = _BV(CLKPS2) | _BV(CLKPS0); // set clock prescaler to 32 (8MHz /32 = 250kHz)
-}*/
 
 void setTime()
 {
@@ -92,7 +86,7 @@ void setTime()
     display.startFlash();
     while (button.isPressed())
     {
-        time.increment(5);
+        time.next(5);
         display.showTime(time);
         if (cnt < 5)
         {
