@@ -17,8 +17,8 @@
 class Display
 {
 private:
-  LED H[12];
-  LED M[12];
+  LED outerRing[12];
+  LED innerRing[12];
 
 public:
   Display();
