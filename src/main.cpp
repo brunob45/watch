@@ -58,8 +58,6 @@ void setup()
     // disable all peripherals.
     PRR = 0xFF;
 
-    //setLowClockSpeed();
-
     button.enableInterrupt(onButtonPressed);
     sleepTimer.enableInterrupt(sleepSequence);
 
