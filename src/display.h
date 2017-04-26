@@ -19,6 +19,8 @@ class Display
 private:
   LED outerRing[12];
   LED innerRing[12];
+  LED* M = outerRing;
+  LED* H = innerRing;
 
 public:
   Display();

@@ -41,18 +41,18 @@ Display::Display()
     outerRing[10] = LED(&PORTA, 2); // A2
     outerRing[11] = LED(&PORTD, 2); // D2
 
-    innerRing[0 / 5] = LED(&PORTD, 0);  // D0
-    innerRing[5 / 5] = LED(&PORTC, 2);  // C2
-    innerRing[10 / 5] = LED(&PORTC, 0); // C0
-    innerRing[15 / 5] = LED(&PORTC, 7); // C7
-    innerRing[20 / 5] = LED(&PORTB, 5); // B5
-    innerRing[25 / 5] = LED(&PORTB, 3); // B3
-    innerRing[30 / 5] = LED(&PORTB, 0); // B0
-    innerRing[35 / 5] = LED(&PORTD, 7); // D7
-    innerRing[40 / 5] = LED(&PORTB, 7); // B7
-    innerRing[45 / 5] = LED(&PORTA, 3); // A3
-    innerRing[50 / 5] = LED(&PORTD, 4); // D4
-    innerRing[55 / 5] = LED(&PORTD, 1); // D1
+    innerRing[0] = LED(&PORTD, 0);  // D0
+    innerRing[1] = LED(&PORTC, 2);  // C2
+    innerRing[2] = LED(&PORTC, 0); // C0
+    innerRing[3] = LED(&PORTC, 7); // C7
+    innerRing[4] = LED(&PORTB, 5); // B5
+    innerRing[5] = LED(&PORTB, 3); // B3
+    innerRing[6] = LED(&PORTB, 0); // B0
+    innerRing[7] = LED(&PORTD, 7); // D7
+    innerRing[8] = LED(&PORTB, 7); // B7
+    innerRing[9] = LED(&PORTA, 3); // A3
+    innerRing[10] = LED(&PORTD, 4); // D4
+    innerRing[11] = LED(&PORTD, 1); // D1
 }
 
 void Display::showTime()
@@ -66,8 +66,8 @@ void Display::showTime(Time t)
 		clear(); // clear old time
 
     displayTime = t;
-    outerRing[displayTime.h % 12].turnOn();
-    innerRing[displayTime.m / 5].turnOn();
+    H[displayTime.h % 12].turnOn();
+    M[displayTime.m / 5].turnOn();
 
     timer0.resetCounter(); // reset blinking timer
     showing = 1;
@@ -75,8 +75,8 @@ void Display::showTime(Time t)
 
 void Display::clear()
 {
-    outerRing[displayTime.h % 12].turnOff();
-    innerRing[displayTime.m / 5].turnOff();
+    H[displayTime.h % 12].turnOff();
+    M[displayTime.m / 5].turnOff();
     showing = 0;
 }
 
