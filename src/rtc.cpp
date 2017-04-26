@@ -9,6 +9,7 @@
 
 #include "rtc.h"
 #include "twi.h"
+#include "bcd.hpp"
 
 TWI twi;
 
@@ -22,9 +23,10 @@ Time RTC::getTime()
     twi.restart();
 
     twi.write(_address + 1);
-    twi.read(t.s, 1);
-    twi.read(t.m, 1);
-    twi.read(t.h, 0);
+
+    t.s = BCDtoBIN(twi.read(1));
+    t.m = BCDtoBIN(twi.read(1));
+    t.h = BCDtoBIN(twi.read(0));
 
     twi.stop();
 
@@ -38,11 +40,11 @@ uint8_t RTC::setTime(Time t)
     twi.write(_address);
     twi.write(_reg);
 
-    twi.write(t.s);
+    twi.write(BINtoBCD(t.s));
     
-    twi.write(t.m);
+    twi.write(BINtoBCD(t.m));
     
-    twi.write(t.h);
+    twi.write(BINtoBCD(t.h));
     
     twi.stop();
 

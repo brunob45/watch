@@ -8,7 +8,6 @@
  */
 
 #include "twi.h"
-#include "util.h"
 
 TWI::TWI()
 {
@@ -39,13 +38,13 @@ void TWI::restart()
     sendStartCondition();
 }
 
-void TWI::read(uint8_t &t, uint8_t ack)
+uint8_t TWI::read(uint8_t ack)
 {
     TWCR = _BV(TWINT) | _BV(TWEN) | (ack ? _BV(TWEA) : 0);
 
     while ((TWCR & _BV(TWINT)) == 0)
 	;
-    t = TWDR;
+    return TWDR;
 }
 
 void TWI::write(uint8_t t)
