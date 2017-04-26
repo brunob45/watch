@@ -19,7 +19,7 @@ Timer0::Timer0(EventHandler handler)
     // mode CTC du timer 1 avec horloge divisee par 1024
     // interruption apres la duree specifiee
 
-    // disable clock to timer1 module
+    // disable clock to timer0 module
     PRR &= ~_BV(PRTIM0);
 
     // set interrupt handler method
