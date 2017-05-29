@@ -8,6 +8,7 @@
  */
 
 #include <avr/interrupt.h>
+#include <avr/power.h>
 #include "timer0.h"
 
 #define TIMER_PRESCALER 1024UL
@@ -19,19 +20,21 @@ Timer0::Timer0(EventHandler handler)
     // mode CTC du timer 1 avec horloge divisee par 1024
     // interruption apres la duree specifiee
 
-    // disable clock to timer0 module
-    PRR &= ~_BV(PRTIM0);
+    // enable clock to timer0 module
+    power_timer0_enable();
 
     // set interrupt handler method
     if (handler)
 		onTimer0Out = handler;
 
     TCCR0A = _BV(CTC0) | _BV(CS02) | _BV(CS00); //CS02 & CS00 for clk/1024 + CTC timer
+
+    power_timer0_disable();
 }
 
 void Timer0::start(const uint8_t top)
 {
-    PRR &= ~_BV(PRTIM0);
+    power_timer0_enable();
     TCNT0 = 0;
     OCR0A = top; //Counter compare value
 }
@@ -43,19 +46,19 @@ void Timer0::start_ms(const uint8_t top_ms)
 
 void Timer0::restart()
 {
-    PRR &= ~_BV(PRTIM0);
+    power_timer0_enable();
     TCNT0 = 0;
 }
 
 void Timer0::stop()
 {
-    PRR |= _BV(PRTIM0);
+    power_timer0_disable();
 }
 
 void Timer0::enableInterrupt(EventHandler handler)
 {
     uint8_t PRR_old = PRR;
-    PRR &= ~_BV(PRTIM0);
+    power_timer0_enable();
 
     if (handler)
 		onTimer0Out = handler;

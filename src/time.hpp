@@ -14,6 +14,9 @@
 
 class Time
 {
+  private:
+    bool m_bIsDirty;
+
   public:
     uint8_t h;
     uint8_t m;
@@ -21,7 +24,7 @@ class Time
 
   public:
     Time(uint8_t _h = 0, uint8_t _m = 0, uint8_t _s = 0)
-	    : h(_h), m(_m), s(_s)
+	    : h(_h), m(_m), s(_s), m_bIsDirty(false)
     {
 		  normalize();
     }
@@ -42,7 +45,10 @@ class Time
       m += minutes - (m % minutes);
       s = 0;
       normalize();
+      m_bIsDirty = true;
     }
+
+    const uint8_t& isDirty() { return m_bIsDirty; }
 };
 
 #endif
