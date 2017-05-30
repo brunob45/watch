@@ -17,6 +17,7 @@
 
 #include <util/delay.h>
 #include <avr/sleep.h>
+#include <avr/power.h>
 
 volatile STATE::state_t state = STATE::SLEEP;
 volatile uint8_t ledState = 0;
@@ -29,11 +30,6 @@ RTC rtc;
 
 void onButtonPressed()
 {
-    if (!button.isDbPressed())
-    {
-        return;
-    }
-
     switch (state)
     {
     case STATE::SLEEP:
@@ -56,7 +52,7 @@ void onButtonPressed()
 void setup()
 {
     // disable all peripherals.
-    PRR = 0xFF;
+    power_all_disable();
 
     button.enableInterrupt(onButtonPressed);
     sleepTimer.enableInterrupt(sleepSequence);
@@ -109,7 +105,7 @@ void sleepSequence()
 {
     cli();
     {
-        if (state == STATE::PROG)
+        if (time.isDirty())
         {
             rtc.setTime(time);
         }

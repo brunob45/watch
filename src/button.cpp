@@ -56,6 +56,12 @@ void Button::disableInterrupt()
 
 ISR(INT1_vect)
 {
+    if(isPressed() != isDbPressed())
+    {
+        // Unstable state detected : cancel interruption
+        return;
+    }
+
     if (onButtonPressed)
     {
         onButtonPressed();
