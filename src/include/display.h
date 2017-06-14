@@ -10,18 +10,10 @@
 #ifndef __DISPLAY_H__
 #define __DISPLAY_H__
 
-#include "led.h"
 #include "time.hpp"
-#include <avr/io.h>
 
 class Display
 {
-private:
-  LED outerRing[12];
-  LED innerRing[12];
-  LED* M = outerRing;
-  LED* H = innerRing;
-
 public:
   Display();
   ~Display() {}
@@ -29,9 +21,8 @@ public:
   void clear();
   void showTime();
   void showTime(Time t);
-  void startFlash(uint8_t delay = 255);
-  void stopFlash();
   void toggle();
+  void setTime(Time t);
 };
 
 #else

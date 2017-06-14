@@ -14,13 +14,13 @@
 
 class Time
 {
-  private:
-    bool m_bIsDirty;
-
   public:
     uint8_t h;
     uint8_t m;
     uint8_t s;
+    
+  private:
+    bool m_bIsDirty;
 
   public:
     Time(uint8_t _h = 0, uint8_t _m = 0, uint8_t _s = 0)
@@ -48,7 +48,7 @@ class Time
       m_bIsDirty = true;
     }
 
-    const uint8_t& isDirty() { return m_bIsDirty; }
+    const uint8_t isDirty() { return m_bIsDirty; }
 };
 
 #endif

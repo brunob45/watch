@@ -8,7 +8,7 @@
  */
 
 #include "twi.h"
-#include <power.h>
+#include <avr/power.h>
 
 TWI::TWI()
 {
@@ -59,7 +59,7 @@ void TWI::enable()
 {
     power_twi_enable();           //enable clock to module
     TWSR = 0;				      // Initialisation de l'horloge de l'interface I2C
-    TWBR = MAX((F_CPU / F_TWI - 16) / 2, 10); // prediviseur
+    TWBR = 10;/*MAX((F_CPU / F_TWI - 16) / 2, 10);*/ // prediviseur
     TWHSR = 0;				      // _BV(TWIHS); // clock source = F_CPU * 2   /!\ Dont need to /!\ */
 }
 

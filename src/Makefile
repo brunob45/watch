@@ -1,66 +1,4 @@
 
-#########  AVR Project Makefile Template   #########
-######                                        ######
-######    Copyright (C) 2003, Pat Deegan,     ######
-######            Psychogenic Inc             ######
-######          All Rights Reserved           ######
-######                                        ######
-###### You are free to use this code as part  ######
-###### of your own applications provided      ######
-###### you keep this copyright notice intact  ######
-###### and acknowledge its authorship with    ######
-###### the words:                             ######
-######                                        ######
-###### "Contains software by Pat Deegan of    ######
-###### Psychogenic Inc (www.psychogenic.com)" ######
-######                                        ######
-###### If you use it as part of a web site    ######
-###### please include a link to our site,     ######
-###### http://electrons.psychogenic.com  or   ######
-###### http://www.psychogenic.com             ######
-######                                        ######
-###### Modifications by Bruno Bousquet        ######
-####################################################
-
-
-##### This Makefile will make compiling Atmel AVR
-##### micro controller projects simple with Linux
-##### or other Unix workstations and the AVR-GCC
-##### tools.
-#####
-##### It supports C, C++ and Assembly source files.
-#####
-##### Customize the values as indicated below and :
-##### make
-##### make disasm
-##### make stats
-##### make hex
-##### make writeflash
-##### make gdbinit
-##### or make clean
-#####
-##### See the http://electrons.psychogenic.com/
-##### website for detailed instructions
-
-
-####################################################
-#####                                          #####
-#####              Configuration               #####
-#####                                          #####
-##### Customize the values in this section for #####
-##### your project. MCU, PROJECTNAME and       #####
-##### PRJSRC must be setup for all projects,   #####
-##### the remaining variables are only         #####
-##### relevant to those needing additional     #####
-##### include dirs or libraries and those      #####
-##### who wish to use the avrdude programmer   #####
-#####                                          #####
-##### See http://electrons.psychogenic.com/    #####
-##### for further details.                     #####
-#####                                          #####
-####################################################
-
-
 #####         Target Specific Details          #####
 #####     Customize these for your project     #####
 
@@ -69,25 +7,24 @@
 # options for possible values)
 MCU=attiny88
 
-F_CPU = 1000000 
-#250000
+F_CPU = 128000
 F_TWI = 100000
-
-ISP=usbasp
 
 # Name of our project
 # (use a single word, e.g. 'myproject')
 PROJECTNAME=Montre
+BINDIR=bin
+SRCDIR=src
 
 # Source files
 # List C/C++/Assembly source files:
 # (list all files to compile, e.g. 'a.c b.cpp as.S'):
 # Use .cc, .cpp or .C suffix for C++ files, use .S
 # (NOT .s !!!) for assembly source code files.
-PRJSRC=$(wildcard *.c *.cpp *.cc *.C *.S)
-
+PRJSRC=$(wildcard $(addprefix $(SRCDIR)/, *.c *.cpp *.cc *.C *.S))
+#$(info $$PRJSRC is [${PRJSRC}])
 # additional includes (e.g. -I/path/to/mydir)
-INC=
+INC=-I./include
 
 # libraries to link in (e.g. -lmylib)
 LIBS=
@@ -111,12 +48,12 @@ OPTLEVEL=s
 # one of the valid "-c PROGRAMMER-ID" values
 # described in the avrdude info page.
 #
-AVRDUDE_PROGRAMMERID=usbasp
+AVRDUDE_PROGRAMMERID=avrisp #usbasp
 
 # port--serial or parallel port to which your
 # hardware programmer is attached
 #
-AVRDUDE_PORT=/dev/ttyS0
+AVRDUDE_PORT=COM3 #/dev/ttyS0
 
 
 ####################################################
@@ -136,21 +73,23 @@ AVRDUDE_PORT=/dev/ttyS0
 HEXFORMAT=ihex
 
 # compiler
-CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
+CFLAGS=-I. $(INC) -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-fpack-struct -fshort-enums             \
 	-funsigned-bitfields -funsigned-char    \
-	-Wall                                        \
+	-Wall                                      \
 	-Wa,-ahlms=$(firstword                  \
-	$(filter %.lst, $(<:.c=.lst))) \
+	$(filter %.lst, $(<:$(SRCDIR)/%.c=%.lst))) \
 	-DF_CPU=$(F_CPU) \
-	-DF_TWI=$(F_TWI)
-
+	-DF_TWI=$(F_TWI) \
+#	-g -DF_XTL=$(F_XTL) \
+	-DF_DIV=$(F_DIV) \
 # c++ specific flags
-CPPFLAGS=-fno-exceptions -std=c++11   \
-	-Wa,-ahlms=$(firstword         \
-	$(filter %.lst, $(<:.cpp=.lst))\
-	$(filter %.lst, $(<:.cc=.lst)) \
-	$(filter %.lst, $(<:.C=.lst)))
+CPPFLAGS=-fno-exceptions -mint8  \
+	-Wa,-ahlms=$(BINDIR)/$(firstword         \
+	$(filter %.lst, $(<:$(SRCDIR)/%.cpp=%.lst))\
+	$(filter %.lst, $(<:$(SRCDIR)/.cc=.lst)) \
+	$(filter %.lst, $(<:$(SRCDIR)/.C=.lst))) \
+	# -std=c++11
 
 # assembler
 ASMFLAGS =-I. $(INC) -mmcu=$(MCU)        \
@@ -172,11 +111,11 @@ AVRDUDE=avrdude
 REMOVE=rm -f
 
 ##### automatic target names ####
-TRG=$(PROJECTNAME).out
+TRG=$(BINDIR)/$(PROJECTNAME).out
 DUMPTRG=$(PROJECTNAME).s
 
-HEXROMTRG=$(PROJECTNAME).hex
-HEXTRG=$(HEXROMTRG) $(PROJECTNAME).ee.hex
+HEXROMTRG=$(BINDIR)/$(PROJECTNAME).hex
+HEXTRG=$(HEXROMTRG) $(BINDIR)/$(PROJECTNAME).ee.hex
 GDBINITFILE=gdbinit-$(PROJECTNAME)
 
 # Define all object files.
@@ -193,19 +132,19 @@ ASMFILES=$(filter %.S, $(PRJSRC))
 
 
 # List all object files we need to create
-OBJDEPS=$(CFILES:.c=.o)    \
-	$(CPPFILES:.cpp=.o)\
+OBJDEPS=$(addprefix $(BINDIR)/, $(CFILES:$(SRCDIR)/%.c=%.o)    \
+	$(CPPFILES:$(SRCDIR)/%.cpp=%.o)\
 	$(BIGCFILES:.C=.o) \
 	$(CCFILES:.cc=.o)  \
-	$(ASMFILES:.S=.o)
+	$(ASMFILES:.S=.o) )
 
 # Define all lst files.
 LST=$(filter %.lst, $(OBJDEPS:.o=.lst))
+#$(info $$LST is [${LST}])
 
 # All the possible generated assembly
 # files (.s files)
 GENASMFILES=$(filter %.s, $(OBJDEPS:.o=.s))
-
 
 .SUFFIXES : .c .cc .cpp .C .o .out .s .S \
 	.hex .ee.hex .h .hh .hpp
@@ -234,7 +173,7 @@ writeflash: hex
 install: writeflash
 
 $(DUMPTRG): $(TRG)
-	$(OBJDUMP) -S  $< > $@
+	$(OBJDUMP) -d  $< > $@
 
 
 $(TRG): $(OBJDEPS)
@@ -244,7 +183,7 @@ $(TRG): $(OBJDEPS)
 
 #### Generating assembly ####
 # asm from C
-%.s: %.c
+$(BINDIR)/%.s: $(SRCDIR)/%.c
 	$(CC) -S $(CFLAGS) $< -o $@
 
 # asm from (hand coded) asm
@@ -253,20 +192,23 @@ $(TRG): $(OBJDEPS)
 
 
 # asm from C++
-.cpp.s .cc.s .C.s :
+#.cpp.s .cc.s .C.s :
+$(BINDIR)/%.s : $(SRCDIR)/%.cpp
 	$(CC) -S $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 
 
 #### Generating object files ####
 # object from C
-.c.o:
-	$(CC) $(CFLAGS) -c $<
+$(BINDIR)/%.o : $(SRCDIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 # object from C++ (.cc, .cpp, .C files)
-.cc.o .cpp.o .C.o :
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c $<
+#.cc.o .cpp.o .C.o :
+#$(OBJDEPS) : .cpp
+$(BINDIR)/%.o : $(SRCDIR)/%.cpp
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 # object from asm
 .S.o :
@@ -314,10 +256,19 @@ clean:
 	$(REMOVE) $(HEXTRG)
 	
 fuses:
-	avrdude -c ${ISP} -p attiny88 -P ${PORT} \
-      -U efuse:w:0xFF:m -U hfuse:w:0xD9:m -U lfuse:w:0xD7:m
-#        e: 1111 1111           h: 1101 1111          l: 0110 1110
+	avrdude -c ${AVRDUDE_PROGRAMMERID} -p $(MCU) -P ${AVRDUDE_PORT} \
+	  -U hfuse:w:0xD9:m -U lfuse:w:0xEF:m \
+      -U efuse:w:0x07:m 
+#programmed e: 1111 1111      h: 1101 1111      l: 1110 1111
+#default    e: 1111 1111      h: 1101 1111      l: 0110 1110
 
+# l7 : CKDIV8 (0)
+# l6 : CKOUT (1)
+# l5 : SUT1 (1)
+# l4 : SUT0 (0)
+# l1 : CKSEL1 (1)
+# l0 : CKSEL0 (0)
+#
+#
 
 #####                    EOF                   #####
-
