@@ -21,14 +21,18 @@
 #define loc_of(x) (uint16_t)(&x)
 #define data_of(x) (*(volatile uint8_t *)((uint16_t)x))
 
-static const uint8_t H = 0;
-static const uint8_t M = 1;
-
 typedef struct
 {
     uint8_t p;
     uint8_t b;
 } led_t;
+
+static uint8_t showing = 0;
+static struct
+{
+    led_t m;
+    led_t h;
+} current;
 
 static led_t MEMDATA_H[] PROGMEM =
     {
@@ -60,17 +64,29 @@ static led_t MEMDATA_M[] PROGMEM =
         {loc_of(PORTA), _BV(2)},
         {loc_of(PORTD), _BV(2)}};
 
-static uint8_t showing = 0;
-static led_t current[2] = {
-    {
-        0,
-    },
-    {
-        0,
-    }};
-
 namespace Display
 {
+
+void init()
+{
+    DDRB = 0xFF;
+    DDRC = 0x1F;
+    DDRD = 0xFE;
+    DDRA = 0x0F;
+}
+
+void shutDown()
+{
+    // tri-stating all pins
+    DDRB = 0;
+    PORTB = 0;
+    DDRC = 0;
+    PORTC = 0;
+    DDRD = 0;
+    PORTD = 0;
+    DDRA = 0;
+    PORTA = 0;
+}
 
 void showTime()
 {
@@ -79,13 +95,13 @@ void showTime()
         for (uint8_t port = loc_of(PORTB); port <= loc_of(PORTA); port += 3)
         {
             uint8_t mask = 0;
-            if (port == current[H].p)
+            if (port == current.h.p)
             {
-                mask |= current[H].b;
+                mask |= current.h.b;
             }
-            if (port == current[M].p)
+            if (port == current.m.p)
             {
-                mask |= current[M].b;
+                mask |= current.m.b;
             }
             data_of(port) = mask;
         }
@@ -97,12 +113,12 @@ void showTime()
 void setTime(Time t)
 {
     uint16_t dw = pgm_read_word(&MEMDATA_H[t.h / 2]);
-    current[H].p = (uint8_t)(dw >> 8);
-    current[H].b = (uint8_t)(dw);
+    current.h.p = (uint8_t)(dw >> 8);
+    current.h.b = (uint8_t)(dw);
 
     dw = pgm_read_word(&MEMDATA_M[t.m / 5]);
-    current[M].p = (uint8_t)(dw >> 8);
-    current[M].b = (uint8_t)(dw);
+    current.m.p = (uint8_t)(dw >> 8);
+    current.m.b = (uint8_t)(dw);
 }
 
 void clear()
