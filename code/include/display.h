@@ -14,6 +14,8 @@
 
 namespace Display
 {
+void init();
+void shutDown();
 void clear();
 void showTime();
 void toggle();
