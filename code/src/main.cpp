@@ -23,29 +23,46 @@
 #include "rtc.h"
 #include "states.h"
 
-volatile bool tick = false;
+#define tick GPIOR0
+static __inline__ void set_tick()
+{
+    tick |= _BV(0);
+}
+static __inline__ void clear_tick()
+{
+    tick &= ~_BV(0);
+}
+static __inline__ void wait_tick()
+{
+    while (~tick & _BV(0))
+    {
+        // wait
+    }
+}
+
 ISR(TIMER0_COMPA_vect)
 {
-    tick = true;
+    set_tick();
 }
 
 int main()
 {
     StateCtx::SetState(WakeUpState);
 
+    uint8_t deb_cnt = 10;
     for (;;)
     {
-        while (tick == false)
-        {
-            // wait
-        }
-        tick = false;
+        wait_tick();
+        clear_tick();
 
-        Button::Update();
+        deb_cnt--;
+        if (deb_cnt == 0)
+        {
+            deb_cnt = 10;
+            Button::Update();
+        }
 
         StateCtx::Update();
         StateCtx::Perform();
     }
-
-    return 0;
 }
