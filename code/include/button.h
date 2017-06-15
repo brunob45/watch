@@ -10,8 +10,6 @@
 #ifndef __BUTTON_H__
 #define __BUTTON_H__
 
-#include <avr/io.h>
-
 namespace Button
 {
 static uint8_t current_state = 0;

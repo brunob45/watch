@@ -10,8 +10,6 @@
 #ifndef __RTC_H__
 #define __RTC_H__
 
-#include <avr/io.h>
-#include "time.hpp"
 #include "twi.h"
 #include "bcd.hpp"
 
@@ -48,16 +46,15 @@ static __inline__ uint8_t setTime(Time t)
     TWI::write(_reg);
 
     TWI::write(BINtoBCD(t.s));
-    
+
     TWI::write(BINtoBCD(t.m));
-    
+
     TWI::write(BINtoBCD(t.h));
-    
+
     TWI::stop();
 
     return 0;
 }
-
 };
 
 #else

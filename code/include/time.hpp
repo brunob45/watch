@@ -10,45 +10,43 @@
 #ifndef __TIME_H__
 #define __TIME_H__
 
-#include <avr/io.h>
-
 class Time
 {
-  public:
-    uint8_t h;
-    uint8_t m;
-    uint8_t s;
-    
-  private:
-    bool m_bIsDirty;
+public:
+  uint8_t h;
+  uint8_t m;
+  uint8_t s;
 
-  public:
-    Time(uint8_t _h = 0, uint8_t _m = 0, uint8_t _s = 0)
-	    : h(_h), m(_m), s(_s), m_bIsDirty(false)
-    {
-		  normalize();
-    }
-    ~Time() {}
+private:
+  bool m_bIsDirty;
 
-    void normalize()
-    {
-      m += s / 60;
-      h += m / 60;
+public:
+  Time(uint8_t _h = 0, uint8_t _m = 0, uint8_t _s = 0)
+      : h(_h), m(_m), s(_s), m_bIsDirty(false)
+  {
+    normalize();
+  }
+  ~Time() {}
 
-      h %= 24;
-      m %= 60;
-      s %= 60;
-    }
+  void normalize()
+  {
+    m += s / 60;
+    h += m / 60;
 
-    void next(uint8_t minutes)
-    {
-      m += minutes - (m % minutes);
-      s = 0;
-      normalize();
-      m_bIsDirty = true;
-    }
+    h %= 24;
+    m %= 60;
+    s %= 60;
+  }
 
-    const uint8_t isDirty() { return m_bIsDirty; }
+  void next(uint8_t minutes)
+  {
+    m += minutes - (m % minutes);
+    s = 0;
+    normalize();
+    m_bIsDirty = true;
+  }
+
+  const uint8_t isDirty() { return m_bIsDirty; }
 };
 
 #endif
