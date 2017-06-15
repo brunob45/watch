@@ -10,12 +10,7 @@
 #include "twi.h"
 #include <avr/power.h>
 
-TWI::TWI()
-{
-    disable();
-}
-
-TWI::~TWI()
+void TWI::init()
 {
     disable();
 }

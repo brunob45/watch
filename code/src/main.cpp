@@ -19,7 +19,6 @@
 #include "rtc.h"
 
 Time time;
-RTC rtc;
 Display display;
 
 namespace StateCtx
@@ -92,7 +91,7 @@ void SleepState_Perform()
 {
     if (time.isDirty())
     {
-        rtc.setTime(time);
+        RTC::setTime(time);
     }
 
     display.clear();
@@ -122,7 +121,7 @@ void WakeUpState_init()
 
         Button::Init();
 
-        time = rtc.getTime();
+        time = RTC::getTime();
         display.showTime(time);
     }
     sei();

@@ -18,7 +18,7 @@
 #endif
 
 #define loc_of(x) (uint16_t)(&x)
-#define data_of(x) (*(volatile uint8_t *)(x))
+#define data_of(x) (*(volatile uint8_t *)((uint16_t)x))
 
 static const uint8_t H = 0;
 static const uint8_t M = 1;
@@ -42,7 +42,7 @@ static led_t MEMDATA_H[] PROGMEM =
         {loc_of(PORTB), _BV(7)},
         {loc_of(PORTA), _BV(0)},
         {loc_of(PORTD), _BV(4)},
-        {loc_of(PORTD), _BV(1)},
+        {loc_of(PORTD), _BV(1)}
 };
 
 static led_t MEMDATA_M[] PROGMEM =
@@ -58,7 +58,7 @@ static led_t MEMDATA_M[] PROGMEM =
         {loc_of(PORTD), _BV(5)},
         {loc_of(PORTB), _BV(6)},
         {loc_of(PORTA), _BV(2)},
-        {loc_of(PORTD), _BV(2)},
+        {loc_of(PORTD), _BV(2)}
 };
 
 static uint8_t showing = 0;

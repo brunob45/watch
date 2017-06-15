@@ -12,19 +12,52 @@
 
 #include <avr/io.h>
 #include "time.hpp"
+#include "twi.h"
+#include "bcd.hpp"
 
-class RTC
+namespace RTC
 {
-  private:
-    const uint8_t _address;
-    const uint8_t _reg;
+static const uint8_t _address = 0xA2;
+static const uint8_t _reg = 0x04;
 
-  public:
-    RTC(uint8_t address = 0xA2, uint8_t reg = 0x04) : _address(address), _reg(reg) {}
-    ~RTC() {}
+static __inline__ Time getTime()
+{
+    Time t;
 
-    Time getTime();
-    uint8_t setTime(Time);
+    TWI::start();
+    TWI::write(_address);
+    TWI::write(_reg);
+    TWI::restart();
+
+    TWI::write(_address + 1);
+
+    t.s = BCDtoBIN(TWI::read(1));
+    t.m = BCDtoBIN(TWI::read(1));
+    t.h = BCDtoBIN(TWI::read(0));
+
+    TWI::stop();
+
+    t.normalize();
+    return t;
+}
+
+static __inline__ uint8_t setTime(Time t)
+{
+    TWI::start();
+    TWI::write(_address);
+    TWI::write(_reg);
+
+    TWI::write(BINtoBCD(t.s));
+    
+    TWI::write(BINtoBCD(t.m));
+    
+    TWI::write(BINtoBCD(t.h));
+    
+    TWI::stop();
+
+    return 0;
+}
+
 };
 
 #else

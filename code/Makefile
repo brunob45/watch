@@ -84,7 +84,7 @@ CFLAGS=-I. $(INC) -mmcu=$(MCU) -O$(OPTLEVEL) \
 #	-g -DF_XTL=$(F_XTL) \
 	-DF_DIV=$(F_DIV) \
 # c++ specific flags
-CPPFLAGS=-fno-exceptions -mint8  \
+CPPFLAGS=-fno-exceptions   \
 	-Wa,-ahlms=$(BINDIR)/$(firstword         \
 	$(filter %.lst, $(<:$(SRCDIR)/%.cpp=%.lst))\
 	$(filter %.lst, $(<:$(SRCDIR)/.cc=.lst)) \
