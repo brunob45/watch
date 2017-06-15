@@ -122,7 +122,8 @@ void WakeUpState_init()
         Button::Init();
 
         time = RTC::getTime();
-        display.showTime(time);
+        display.setTime(time);
+        display.showTime();
     }
     sei();
 }
@@ -224,7 +225,8 @@ void ChangeTimeState_Update()
         Button::pressed_cnt = 0;
 
         time.next(5);
-        display.showTime(time);
+        display.setTime(time);
+        display.showTime();
 
         if (change_cnt < 3)
         {

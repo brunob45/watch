@@ -106,36 +106,20 @@ void Display::showTime()
     {
         for (uint8_t port = loc_of(PORTB); port <= loc_of(PORTA); port += 3)
         {
-            if (current[H].p == port || current[M].p == port)
+            uint8_t mask = 0;
+            if(port == current[H].p)
             {
-                if (current[H].p == current[M].p)
-                {
-                    data_of(current[H].p) = current[H].b | current[M].b;
-                }
-                else
-                {
-                    data_of(current[H].p) = current[H].b;
-                    data_of(current[M].p) = current[M].b;
-                }
+                mask |= current[H].b;
             }
-            else
+            if(port == current[M].p)
             {
-                data_of(port) = 0;
+                mask |= current[M].b;
             }
+            data_of(port) = mask;
         }
     }
 
     showing = 1;
-}
-
-void Display::showTime(Time t)
-{
-    setTime(t);
-
-    /*if (showing)
-        clear(); // clear old time*/
-
-    showTime();
 }
 
 void Display::setTime(Time t)
@@ -164,8 +148,5 @@ void Display::toggle()
     if (showing)
         clear();
     else
-    {
-        //clear();
         showTime();
-    }
 }

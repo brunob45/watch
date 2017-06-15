@@ -20,7 +20,6 @@ public:
 
   void clear();
   void showTime();
-  void showTime(Time t);
   void toggle();
   void setTime(Time t);
 };
