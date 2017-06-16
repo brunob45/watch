@@ -111,7 +111,7 @@ void SleepState_Perform()
         RTC::setTime(time);
     }
 
-    Display::shutDown();
+    Display::clear();
 
     // activate INT1 interrupts for wake-up
     Button::EnableInterrupt();

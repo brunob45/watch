@@ -36,33 +36,33 @@ static struct
 
 static led_t MEMDATA_H[] PROGMEM =
     {
-        {loc_of(PORTD), _BV(0)},
-        {loc_of(PORTC), _BV(2)},
-        {loc_of(PORTC), _BV(0)},
-        {loc_of(PORTC), _BV(7)},
-        {loc_of(PORTB), _BV(5)},
-        {loc_of(PORTB), _BV(3)},
-        {loc_of(PORTB), _BV(0)},
-        {loc_of(PORTD), _BV(7)},
-        {loc_of(PORTB), _BV(7)},
-        {loc_of(PORTA), _BV(0)},
-        {loc_of(PORTD), _BV(4)},
-        {loc_of(PORTD), _BV(1)}};
+        {loc_of(PORTD), _BV(0)},  // 0
+        {loc_of(PORTC), _BV(2)},  // 1
+        {loc_of(PORTC), _BV(0)},  // 2
+        {loc_of(PORTC), _BV(7)},  // 3
+        {loc_of(PORTB), _BV(5)},  // 4
+        {loc_of(PORTB), _BV(3)},  // 5
+        {loc_of(PORTB), _BV(0)},  // 6
+        {loc_of(PORTD), _BV(7)},  // 7
+        {loc_of(PORTB), _BV(7)},  // 8
+        {loc_of(PORTA), _BV(3)},  // 9
+        {loc_of(PORTD), _BV(4)},  // 10
+        {loc_of(PORTD), _BV(1)}}; // 11
 
 static led_t MEMDATA_M[] PROGMEM =
     {
-        {loc_of(PORTC), _BV(3)},
-        {loc_of(PORTC), _BV(1)},
-        {loc_of(PORTA), _BV(1)},
-        {loc_of(PORTA), _BV(0)},
-        {loc_of(PORTB), _BV(4)},
-        {loc_of(PORTB), _BV(2)},
-        {loc_of(PORTB), _BV(1)},
-        {loc_of(PORTD), _BV(6)},
-        {loc_of(PORTD), _BV(5)},
-        {loc_of(PORTB), _BV(6)},
-        {loc_of(PORTA), _BV(2)},
-        {loc_of(PORTD), _BV(2)}};
+        {loc_of(PORTC), _BV(3)},  // 0
+        {loc_of(PORTC), _BV(1)},  // 1
+        {loc_of(PORTA), _BV(1)},  // 2
+        {loc_of(PORTA), _BV(0)},  // 3
+        {loc_of(PORTB), _BV(4)},  // 4
+        {loc_of(PORTB), _BV(2)},  // 5
+        {loc_of(PORTB), _BV(1)},  // 6
+        {loc_of(PORTD), _BV(6)},  // 7
+        {loc_of(PORTD), _BV(5)},  // 8
+        {loc_of(PORTB), _BV(6)},  // 9
+        {loc_of(PORTA), _BV(2)},  // 10
+        {loc_of(PORTD), _BV(2)}}; // 11
 
 namespace Display
 {
@@ -70,22 +70,9 @@ namespace Display
 void init()
 {
     DDRB = 0xFF;
-    DDRC = 0x1F;
+    DDRC = 0x8F;
     DDRD = 0xFE;
     DDRA = 0x0F;
-}
-
-void shutDown()
-{
-    // tri-stating all pins
-    DDRB = 0;
-    PORTB = 0;
-    DDRC = 0;
-    PORTC = 0;
-    DDRD = 0;
-    PORTD = 0;
-    DDRA = 0;
-    PORTA = 0;
 }
 
 void showTime()
