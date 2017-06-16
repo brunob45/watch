@@ -82,8 +82,9 @@ static __inline__ void DisableInterrupt()
 
 static __inline__ void Init()
 {
-  clear_current();
-  clear_previous();
+  // this way, DisplayState won't unlock until the button is released, then pressed
+  set_current();
+  set_previous();
   state_cnt = 0;
 
   // mettre le bouton en entree

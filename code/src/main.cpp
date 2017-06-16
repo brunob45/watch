@@ -48,10 +48,7 @@ ISR(TIMER0_COMPA_vect)
 
 ISR(INT1_vect)
 {
-    if (StateCtx::current == SleepState)
-    {
-        StateCtx::SetState(WakeUpState);
-    }
+    Button::DisableInterrupt();
 }
 
 int main()
