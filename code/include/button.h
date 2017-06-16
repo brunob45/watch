@@ -19,8 +19,6 @@ static uint8_t deb_cnt = 0;
 
 static __inline__ void Update()
 {
-  previous_state = current_state;
-
   uint8_t reading = PORTC & _BV(3);
   if (current_state ^ reading)
   {

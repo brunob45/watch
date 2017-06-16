@@ -55,6 +55,7 @@ int main()
         wait_tick();
         clear_tick();
 
+        Button::previous_state = Button::current_state;
         deb_cnt--;
         if (deb_cnt == 0)
         {
