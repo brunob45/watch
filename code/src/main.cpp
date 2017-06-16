@@ -45,6 +45,14 @@ ISR(TIMER0_COMPA_vect)
     set_tick();
 }
 
+ISR(INT1_vect)
+{
+    if (StateCtx::current == SleepState)
+    {
+        StateCtx::SetState(WakeUpState);
+    }
+}
+
 int main()
 {
     StateCtx::SetState(WakeUpState);
