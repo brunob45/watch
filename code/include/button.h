@@ -10,22 +10,56 @@
 #ifndef __BUTTON_H__
 #define __BUTTON_H__
 
+#include "gpior.h"
+
 namespace Button
 {
-static uint8_t current_state = 0;
-static uint8_t previous_state = 0;
-static uint16_t pressed_cnt = 0;
+static const uint8_t current_index = 1;
+static const uint8_t previous_index = 2;
+
+static void set_current()
+{
+  GPIOReg::set(current_index);
+}
+static void clear_current()
+{
+  GPIOReg::clear(current_index);
+}
+static uint8_t get_current()
+{
+  return GPIOReg::get(current_index);
+}
+static void set_previous()
+{
+  GPIOReg::set(previous_index);
+}
+static void clear_previous()
+{
+  GPIOReg::clear(previous_index);
+}
+static uint8_t get_previous()
+{
+  return GPIOReg::get(previous_index);
+}
+
+static uint8_t get_pressed()
+{
+  return get_current() && !get_previous();
+}
+
+static uint16_t state_cnt = 0;
 static uint8_t deb_cnt = 0;
 
 static __inline__ void Update()
 {
-  uint8_t reading = PORTC & _BV(3);
-  if (current_state ^ reading)
+  uint8_t reading = (PORTC & _BV(3));
+  if (get_current() != reading)
   {
     deb_cnt--;
     if (deb_cnt == 0)
     {
-      current_state = reading;
+      reading ? set_current() : clear_current();
+      state_cnt = 0;
     }
   }
   else
@@ -33,14 +67,7 @@ static __inline__ void Update()
     deb_cnt = 4;
   }
 
-  if (current_state)
-  {
-    pressed_cnt++;
-  }
-  else
-  {
-    pressed_cnt = 0;
-  }
+  state_cnt++;
 }
 
 static __inline__ void EnableInterrupt()
@@ -55,9 +82,9 @@ static __inline__ void DisableInterrupt()
 
 static __inline__ void Init()
 {
-  current_state = 0;
-  previous_state = 0;
-  pressed_cnt = 0;
+  clear_current();
+  clear_previous();
+  state_cnt = 0;
 
   // mettre le bouton en entree
   DDRD &= ~_BV(3);

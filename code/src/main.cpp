@@ -22,19 +22,20 @@
 #include "button.h"
 #include "rtc.h"
 #include "states.h"
+#include "gpior.h"
 
-#define tick GPIOR0
+static const uint8_t tick_index = 0;
 static __inline__ void set_tick()
 {
-    tick |= _BV(0);
+    GPIOReg::set(tick_index);
 }
 static __inline__ void clear_tick()
 {
-    tick &= ~_BV(0);
+    GPIOReg::clear(tick_index);
 }
 static __inline__ void wait_tick()
 {
-    while (~tick & _BV(0))
+    while (!GPIOReg::get(tick_index))
     {
         // wait
     }
@@ -63,10 +64,12 @@ int main()
         wait_tick();
         clear_tick();
 
-        Button::previous_state = Button::current_state;
+        Button::get_current() ? Button::set_previous() : Button::clear_previous();
+
         deb_cnt--;
         if (deb_cnt == 0)
         {
+            // do every 10 ms
             deb_cnt = 10;
             Button::Update();
         }

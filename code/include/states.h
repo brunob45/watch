@@ -30,7 +30,6 @@ static __inline__ void WakeUpState_Update();
 
 static __inline__ void DisplayState_init();
 static __inline__ void DisplayState_Update();
-static __inline__ void DisplayState_Perform();
 
 static __inline__ void BlinkState_init();
 static __inline__ void BlinkState_Update();
@@ -157,16 +156,14 @@ void WakeUpState_Update()
     StateCtx::SetState(DisplayState);
 }
 
-static uint16_t sleep_cnt = 5000;
 static union cnt_t {
     uint8_t lock;
     uint8_t blink;
     uint8_t change;
-} cnt = {1};
+} cnt = {0};
 
 void DisplayState_init()
 {
-    sleep_cnt = 5000;
     cnt.lock = 1;
     Display::showTime();
 }
@@ -175,49 +172,37 @@ void DisplayState_Update()
 {
     if (cnt.lock == 0)
     {
-        if (Button::pressed_cnt > 2000)
+        if (Button::get_current() && Button::state_cnt > 2000)
         {
             StateCtx::SetState(BlinkState);
         }
-        else if (sleep_cnt == 0)
+        else if (Button::state_cnt > 5000)
         {
             StateCtx::SetState(SleepState);
         }
     }
     else
     {
-        if (Button::current_state && !Button::previous_state)
+        if (Button::get_pressed())
         {
             cnt.lock = 0;
         }
     }
 }
 
-void DisplayState_Perform()
-{
-    if (Button::current_state)
-    {
-        sleep_cnt = 5000;
-    }
-    else
-    {
-        sleep_cnt--;
-    }
-}
-
 void BlinkState_init()
 {
     cnt.blink = 250;
-    sleep_cnt = 5000;
 }
 
 void BlinkState_Update()
 {
-    if (Button::current_state && !Button::previous_state)
+    if (Button::get_pressed())
     {
         StateCtx::SetState(ChangeTimeState);
     }
-    else if (sleep_cnt == 0)
+
+    if (Button::state_cnt > 5000)
     {
         StateCtx::SetState(SleepState);
     }
@@ -231,8 +216,6 @@ void BlinkState_Perform()
         Display::toggle();
         cnt.blink = 250;
     }
-
-    sleep_cnt--;
 }
 
 void ChangeTimeState_init()
@@ -243,10 +226,19 @@ void ChangeTimeState_init()
 
 void ChangeTimeState_Update()
 {
-    static uint8_t change_cnt = 0;
-    if (Button::pressed_cnt > cnt.change)
+    if (!Button::get_current())
     {
-        Button::pressed_cnt = 0;
+        StateCtx::SetState(BlinkState);
+    }
+}
+
+void ChangeTimeState_Perform()
+{
+    static uint8_t change_cnt = 0;
+
+    if (Button::state_cnt > cnt.change)
+    {
+        Button::state_cnt = 0;
 
         time.next(5);
         Display::setTime(time);
@@ -260,14 +252,6 @@ void ChangeTimeState_Update()
         {
             cnt.change = 100;
         }
-    }
-}
-
-void ChangeTimeState_Perform()
-{
-    if (!Button::current_state)
-    {
-        StateCtx::SetState(BlinkState);
     }
 }
 } // States
