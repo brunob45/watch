@@ -91,7 +91,10 @@ static __inline__ void Init()
   // desactiver le Pull-Up resistor
   PORTD &= ~_BV(3);
 
-  // low level interrupt by default
+  // insure low level interrupt (default)
+  EICRA = 0;
+
+  // insure interrupt disabled (default)
   DisableInterrupt();
 }
 }
