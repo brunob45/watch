@@ -113,13 +113,13 @@ void SleepState_Perform()
 
     Display::clear();
 
-    // activate INT1 interrupts for wake-up
-    Button::EnableInterrupt();
-
     //http://www.atmel.com/webdoc/AVRLibcReferenceManual/group__avr__sleep.html
     set_sleep_mode(SLEEP_MODE_PWR_DOWN); // full sleep mode
     cli();
     {
+        // activate INT1 interrupts for wake-up
+        Button::EnableInterrupt();
+
         sleep_enable();
         sleep_bod_disable();
         sei();
