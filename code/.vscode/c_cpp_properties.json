@@ -1,5 +1,10 @@
 {
+<<<<<<< HEAD
     "configurations": [{
+=======
+    "configurations": [
+        {
+>>>>>>> 91625ee933565d9d301270f436a000a90b689efb
             "name": "Mac",
             "includePath": [
                 "${workspaceRoot}",
@@ -20,6 +25,7 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceRoot}",
+<<<<<<< HEAD
                 "/usr/include/c++/5",
                 "/usr/include/x86_64-linux-gnu/c++/5",
                 "/usr/local/include",
@@ -37,6 +43,16 @@
                     "/usr/include",
                     "/usr/include/x86_64-linux-gnu",
                     "/usr/lib/avr/include"
+=======
+                "/usr/include",
+                "/usr/local/include"
+            ],
+            "defines": [],
+            "browse": {
+                "path": [
+                    "/usr/include",
+                    "/usr/local/include"
+>>>>>>> 91625ee933565d9d301270f436a000a90b689efb
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
@@ -46,7 +62,14 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceRoot}",
+<<<<<<< HEAD
                 "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include"
+=======
+                "C:/Program Files (x86)/Windows Kits/8.1/Include/um",
+                "C:/Program Files (x86)/Windows Kits/8.1/Include/shared",
+                "C:/Program Files (x86)/Windows Kits/8.1/Include/winrt",
+                "C:/WinAVR-20100110/avr/include"
+>>>>>>> 91625ee933565d9d301270f436a000a90b689efb
             ],
             "defines": [
                 "_DEBUG",
@@ -54,7 +77,14 @@
             ],
             "browse": {
                 "path": [
+<<<<<<< HEAD
                     "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include/*"
+=======
+                    "C:/Program Files (x86)/Windows Kits/8.1/Include/um",
+                    "C:/Program Files (x86)/Windows Kits/8.1/Include/shared",
+                    "C:/Program Files (x86)/Windows Kits/8.1/Include/winrt",
+                    "C:/WinAVR-20100110/avr/include"
+>>>>>>> 91625ee933565d9d301270f436a000a90b689efb
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

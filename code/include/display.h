@@ -12,18 +12,15 @@
 
 #include "time.hpp"
 
-class Display
+namespace Display
 {
-public:
-  Display();
-  ~Display() {}
-
-  void clear();
-  void showTime();
-  void showTime(Time t);
-  void toggle();
-  void setTime(Time t);
-};
+void init();
+void shutDown();
+void clear();
+void showTime();
+void toggle();
+void setTime(Time t);
+}
 
 #else
 #warning "display already in use."
