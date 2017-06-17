@@ -1,0 +1,35 @@
+PORTB 
+    0 12   i6
+    1 13   o6
+    2 14   o5 / SS
+    3 15   i5 / MOSI
+    4 16   o4 / MISO
+    5 17   i4 / SCK
+    6 07   o9
+    7 08   i8
+    
+PORTC    
+    0 23   i2
+    1 24   o1
+    2 25   i1
+    3 26   o0
+    4 27   SDA
+    5 28   SCL
+    6 29   RST
+    7 20   i3
+    
+PORTD    
+    0 30   i0
+    1 31   i11
+    2 32   o11
+    3 01   BUTTON
+    4 02   i10
+    5 09   o8
+    6 10   o7
+    7 11   i7
+    
+PORTA    
+    0 19   o3
+    1 22   o2
+    2 03   o10
+    3 06   i9

@@ -30,6 +30,8 @@
 *.lst
 *.map
 *.hex
+
+# directories
 src2/
 PCB/Archives/
-src/.vscode/
+code/bin
