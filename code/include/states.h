@@ -192,7 +192,7 @@ void DisplayState_Update()
 
 void BlinkState_init()
 {
-    cnt.blink = 250;
+    cnt.blink = 255;
 }
 
 void BlinkState_Update()
@@ -202,7 +202,7 @@ void BlinkState_Update()
         StateCtx::SetState(ChangeTimeState);
     }
 
-    if (Button::state_cnt > 5000)
+    if (Button::state_cnt > 5000 && !Display::get_show())
     {
         StateCtx::SetState(SleepState);
     }
@@ -220,6 +220,8 @@ void BlinkState_Perform()
 
 void ChangeTimeState_init()
 {
+    time.next(5);
+    Display::setTime(time);
     Display::showTime();
     cnt.change = 250;
 }

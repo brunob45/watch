@@ -11,7 +11,6 @@
 #include <avr/pgmspace.h>
 
 #include "display.h"
-#include "gpior.h"
 
 // Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734
 #ifdef PROGMEM
@@ -33,19 +32,6 @@ static struct
     led_t m;
     led_t h;
 } current;
-
-static __inline__ void set_show()
-{
-    GPIOReg::set(3);
-}
-static __inline__ void clear_show()
-{
-    GPIOReg::clear(3);
-}
-static __inline__ uint8_t get_show()
-{
-    return GPIOReg::get(3);
-}
 
 static led_t MEMDATA_H[] PROGMEM =
     {
@@ -109,7 +95,7 @@ void showTime()
 
 void setTime(Time t)
 {
-    uint16_t dw = pgm_read_word(&MEMDATA_H[t.h / 2]);
+    uint16_t dw = pgm_read_word(&MEMDATA_H[t.h % 12]);
     current.h.b = (uint8_t)(dw >> 8);
     current.h.p = (uint8_t)(dw);
 
