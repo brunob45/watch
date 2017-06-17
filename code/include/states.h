@@ -176,10 +176,6 @@ void DisplayState_Update()
         {
             StateCtx::SetState(BlinkState);
         }
-        else if (Button::state_cnt > 5000)
-        {
-            StateCtx::SetState(SleepState);
-        }
     }
     else
     {
@@ -187,6 +183,10 @@ void DisplayState_Update()
         {
             cnt.lock = 0;
         }
+    }
+    if (Button::state_cnt > 5000)
+    {
+        StateCtx::SetState(SleepState);
     }
 }
 
