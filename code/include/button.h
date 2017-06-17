@@ -48,11 +48,11 @@ static uint8_t get_pressed()
 }
 
 static uint16_t state_cnt = 0;
-static uint8_t deb_cnt = 0;
+static uint8_t deb_cnt = 4;
 
 static __inline__ void Update()
 {
-  uint8_t reading = (PORTC & _BV(3));
+  uint8_t reading = (PIND & _BV(3)) == 0;
   if (get_current() != reading)
   {
     deb_cnt--;
@@ -67,7 +67,7 @@ static __inline__ void Update()
     deb_cnt = 4;
   }
 
-  state_cnt++;
+  state_cnt += 10;
 }
 
 static __inline__ void EnableInterrupt()

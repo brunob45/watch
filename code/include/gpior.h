@@ -15,7 +15,7 @@ static __inline__ void clear(const uint8_t bit)
 
 static __inline__ uint8_t get(const uint8_t bit)
 {
-    return (GPIOR0 & _BV(bit));
+    return (GPIOR0 & _BV(bit)) != 0;
 }
 }
 
