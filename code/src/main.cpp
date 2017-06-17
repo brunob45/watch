@@ -17,6 +17,13 @@
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
 
+FUSES =
+    {
+        FUSE_SUT0,
+        HFUSE_DEFAULT,
+        EFUSE_DEFAULT,
+};
+
 #include "time.hpp"
 #include "display.h"
 #include "button.h"
