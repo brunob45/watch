@@ -11,6 +11,7 @@
 #include <avr/pgmspace.h>
 
 #include "display.h"
+#include "gpior.h"
 
 // Workaround for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34734
 #ifdef PROGMEM
@@ -27,12 +28,24 @@ typedef struct
     uint8_t b;
 } led_t;
 
-static uint8_t showing = 0;
 static struct
 {
     led_t m;
     led_t h;
 } current;
+
+static __inline__ void set_show()
+{
+    GPIOReg::set(3);
+}
+static __inline__ void clear_show()
+{
+    GPIOReg::clear(3);
+}
+static __inline__ uint8_t get_show()
+{
+    return GPIOReg::get(3);
+}
 
 static led_t MEMDATA_H[] PROGMEM =
     {
@@ -71,41 +84,38 @@ void init()
 {
     DDRB = 0xFF;
     DDRC = 0x8F;
-    DDRD = 0xFE;
+    DDRD = 0xF7;
     DDRA = 0x0F;
 }
 
 void showTime()
 {
-    if (showing)
+    for (uint8_t port = loc_of(PORTB); port <= loc_of(PORTA); port += 3)
     {
-        for (uint8_t port = loc_of(PORTB); port <= loc_of(PORTA); port += 3)
+        uint8_t mask = 0;
+        if (port == current.h.p)
         {
-            uint8_t mask = 0;
-            if (port == current.h.p)
-            {
-                mask |= current.h.b;
-            }
-            if (port == current.m.p)
-            {
-                mask |= current.m.b;
-            }
-            data_of(port) = mask;
+            mask |= current.h.b;
         }
+        if (port == current.m.p)
+        {
+            mask |= current.m.b;
+        }
+        data_of(port) = mask;
     }
 
-    showing = 1;
+    set_show();
 }
 
 void setTime(Time t)
 {
     uint16_t dw = pgm_read_word(&MEMDATA_H[t.h / 2]);
-    current.h.p = (uint8_t)(dw >> 8);
-    current.h.b = (uint8_t)(dw);
+    current.h.b = (uint8_t)(dw >> 8);
+    current.h.p = (uint8_t)(dw);
 
     dw = pgm_read_word(&MEMDATA_M[t.m / 5]);
-    current.m.p = (uint8_t)(dw >> 8);
-    current.m.b = (uint8_t)(dw);
+    current.m.b = (uint8_t)(dw >> 8);
+    current.m.p = (uint8_t)(dw);
 }
 
 void clear()
@@ -115,14 +125,11 @@ void clear()
     PORTD = 0;
     PORTA = 0;
 
-    showing = 0;
+    clear_show();
 }
 
 void toggle()
 {
-    if (showing)
-        clear();
-    else
-        showTime();
+    get_show() ? clear() : showTime();
 }
 }
