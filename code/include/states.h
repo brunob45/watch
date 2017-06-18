@@ -138,7 +138,7 @@ void WakeUpState_init()
 
         TCCR0A = _BV(CTC0) | _BV(CS00);
         TCNT0 = 0;
-        OCR0A = 0xff / 2;
+        OCR0A = 108;
         TIMSK0 = _BV(OCIE0A);
 
         Button::Init();
